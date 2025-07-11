@@ -1,0 +1,471 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4; /* Light mode default */
+    color: #333; /* Light mode default text */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    overflow: hidden; /* Clear floats */
+}
+
+header {
+    background: #333;
+    color: #fff;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+header .search-bar {
+    display: flex;
+}
+
+header .search-bar input[type="text"] {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 3px 0 0 3px;
+}
+
+header .search-bar button {
+    padding: 0.5rem;
+    background: #555;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 0 3px 3px 0;
+}
+
+header .header-actions button {
+    margin-left: 1rem;
+    padding: 0.5rem;
+    background: #555;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+header .profile-icon {
+    margin-left: 1rem;
+    padding: 0.5rem 0.8rem;
+    background: #555;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Carousel */
+.carousel {
+    padding: 2rem 0;
+    background: #ddd; /* Placeholder */
+    text-align: center;
+    min-height: 300px; /* Placeholder */
+}
+
+/* Category Navigation */
+#category-nav {
+    background: #444;
+    color: #fff;
+    padding: 0.5rem 0;
+}
+
+#category-nav .desktop-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin: 0 1rem;
+}
+
+.dropdown-btn {
+    background: #555;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+.dropdown:hover .dropdown-content {display: block;}
+.dropdown:hover .dropdown-btn {background-color: #666;}
+
+/* Mobile Bottom Navigation */
+#mobile-bottom-nav {
+    display: none; /* Hidden by default, shown on mobile */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #333;
+    color: #fff;
+    z-index: 1000;
+    padding: 0.5rem 0;
+}
+
+#mobile-bottom-nav button {
+    width: 33.33%;
+    padding: 1rem 0;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+#mobile-bottom-nav button:hover {
+    background: #555;
+}
+
+#mobile-subcategory-drawer {
+    display: none;
+    position: fixed;
+    bottom: 50px; /* Adjust based on #mobile-bottom-nav height */
+    left: 0;
+    width: 100%;
+    background: #f0f0f0;
+    padding: 1rem;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+    z-index: 999;
+    max-height: 50vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+    visibility: hidden;
+}
+#mobile-subcategory-drawer.open {
+    transform: translateY(0);
+    visibility: visible;
+}
+#mobile-subcategory-drawer a {
+    display: block;
+    padding: 0.75rem;
+    color: #333;
+    text-decoration: none;
+    border-bottom: 1px solid #ddd;
+}
+#mobile-subcategory-drawer a:last-child {
+    border-bottom: none;
+}
+
+
+/* Video Grid */
+#video-content-section {
+    padding: 2rem 0;
+}
+
+.view-controls {
+    margin-bottom: 1rem;
+    text-align: right;
+}
+.view-controls button {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    border: 1px solid #ccc;
+    background: #f0f0f0;
+    cursor: pointer;
+}
+.view-controls button.active {
+    background: #555;
+    color: #fff;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Default for mobile-first */
+    gap: 1rem;
+}
+
+.video-grid.list-view {
+    grid-template-columns: 1fr; /* Single column for list view */
+}
+
+.video-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.video-item img.thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.video-item .info {
+    padding: 0.75rem;
+}
+.video-item .info h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.video-item .info p {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* List View Specifics */
+.video-grid.list-view .video-item {
+    display: flex;
+    align-items: center;
+}
+.video-grid.list-view .video-item img.thumbnail {
+    width: 120px; /* Fixed width for thumbnails in list view */
+    height: 70px;
+    object-fit: cover;
+    margin-right: 1rem;
+}
+.video-grid.list-view .video-item .info {
+    flex-grow: 1;
+}
+
+
+/* Video Player Page */
+#video-player-page {
+    padding: 1rem 0;
+}
+
+#sticky-player-container {
+    position: sticky;
+    top: 60px; /* Adjust based on header height */
+    z-index: 900;
+    background-color: #000; /* Background for the player area */
+}
+
+/* VideoJS specific styling */
+.video-js {
+    width: 100% !important; /* Ensure it takes full width of its container */
+    height: auto !important; /* Adjust height automatically */
+}
+
+
+#video-info-container {
+    padding-top: 1rem;
+}
+#video-info-container h2 {
+    margin-bottom: 0.5rem;
+}
+#server-quality-selector, #subtitle-selector, #episode-navigation {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+#server-quality-selector select, #subtitle-selector select {
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+body.dark-mode header {
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
+body.dark-mode header .search-bar input[type="text"] {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+body.dark-mode header .search-bar button,
+body.dark-mode header .header-actions button {
+    background: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+body.dark-mode header .profile-icon {
+    background: #333;
+    color: #e0e0e0;
+}
+body.dark-mode #category-nav {
+    background: #2c2c2c;
+}
+body.dark-mode .dropdown-btn {
+    background: #333;
+    color: #e0e0e0;
+}
+body.dark-mode .dropdown-content {
+    background-color: #333;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+}
+body.dark-mode .dropdown-content a {
+    color: #e0e0e0;
+}
+body.dark-mode .dropdown-content a:hover {
+    background-color: #555;
+}
+body.dark-mode .video-item {
+    background: #1e1e1e;
+    border-color: #333;
+}
+body.dark-mode .video-item .info h3 {
+    color: #f5f5f5;
+}
+body.dark-mode .video-item .info p {
+    color: #aaa;
+}
+body.dark-mode .view-controls button {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #555;
+}
+body.dark-mode .view-controls button.active {
+    background: #555;
+    color: #fff;
+}
+body.dark-mode #mobile-bottom-nav {
+    background: #1e1e1e;
+}
+body.dark-mode #mobile-bottom-nav button {
+    color: #e0e0e0;
+}
+body.dark-mode #mobile-bottom-nav button:hover {
+    background: #333;
+}
+body.dark-mode #mobile-subcategory-drawer {
+    background: #2c2c2c;
+    color: #e0e0e0;
+}
+body.dark-mode #mobile-subcategory-drawer a {
+    color: #e0e0e0;
+    border-bottom: 1px solid #444;
+}
+
+
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 2rem;
+    background: #333;
+    color: #fff;
+}
+body.dark-mode footer {
+    background: #1e1e1e;
+}
+
+
+/* Responsive Adjustments */
+
+/* Tablet and larger phones (e.g., landscape phones) */
+@media (min-width: 576px) {
+    .video-grid {
+        /* 2-3 columns for larger screens */
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+     #sticky-player-container {
+        top: 65px; /* Adjust if header height changes */
+    }
+}
+
+/* Small desktops and tablets landscape */
+@media (min-width: 768px) {
+    #mobile-bottom-nav {
+        display: none; /* Hide mobile nav on larger screens */
+    }
+    #mobile-subcategory-drawer {
+        display: none !important; /* Ensure it's hidden */
+    }
+    .desktop-nav {
+        display: flex; /* Show desktop nav */
+    }
+    .video-grid {
+        /* 3-4 columns */
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+/* Medium desktops */
+@media (min-width: 992px) {
+    .video-grid {
+        /* 4-5 columns */
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
+/* Large desktops */
+@media (min-width: 1200px) {
+    .video-grid {
+        /* 5+ columns, or adjust minmax for desired size */
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+/* Hide desktop nav on smaller screens, show mobile nav */
+@media (max-width: 767px) {
+    .desktop-nav {
+        display: none;
+    }
+    #mobile-bottom-nav {
+        display: flex; /* Using flex for even distribution */
+        justify-content: space-around;
+    }
+     #sticky-player-container {
+        top: 58px; /* Adjust if header height changes for mobile */
+    }
+}
+
+/* Video.js Fluid Sizing */
+.video-js.vjs-fluid,
+.video-js.vjs-16-9,
+.video-js.vjs-4-3 {
+  width: 100%;
+  max-width: 100%;
+  height: 0;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+.video-js.vjs-4-3 {
+  padding-top: 75%;
+}
+
+/* Ensure player controls are visible over the video */
+.video-js .vjs-control-bar {
+    z-index: 10;
+}
