@@ -1,4 +1,23 @@
-/* Basic Reset */
+/* Global Variables & Basic Reset */
+:root {
+    --youtube-red: #FF0000;
+    --primary-text-light: #0f0f0f;
+    --secondary-text-light: #606060;
+    --background-light: #ffffff;
+    --surface-background-light: #f9f9f9; /* For cards, dropdowns etc. */
+    --border-light: #cccccc;
+
+    --primary-text-dark: #f1f1f1;
+    --secondary-text-dark: #aaaaaa;
+    --background-dark: #0f0f0f;
+    --surface-background-dark: #222222; /* For cards, dropdowns etc. */
+    --border-dark: #383838;
+
+    --font-family-primary: 'Roboto', 'Arial', sans-serif;
+    --base-font-size: 16px; /* Adjusted for better scaling */
+    --line-height-base: 1.5;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,27 +25,108 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    background-color: #f4f4f4; /* Light mode default */
-    color: #333; /* Light mode default text */
+    font-family: var(--font-family-primary);
+    font-size: var(--base-font-size);
+    line-height: var(--line-height-base);
+    background-color: var(--background-light);
+    color: var(--primary-text-light);
     transition: background-color 0.3s, color 0.3s;
 }
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-    overflow: hidden; /* Clear floats */
+/* Apply a more modern scrollbar if browser supports */
+body::-webkit-scrollbar {
+    width: 10px; /* Slightly wider for desktop */
+}
+body::-webkit-scrollbar-track {
+    background: var(--surface-background-light); /* Use surface for track */
+}
+body::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-text-light); /* Adjusted thumb color */
+    border-radius: 10px;
+    border: 2px solid var(--surface-background-light); /* Creates padding around thumb */
+}
+body.dark-mode::-webkit-scrollbar-track {
+    background: var(--surface-background-dark);
+}
+body.dark-mode::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-text-dark);
+    border: 2px solid var(--surface-background-dark);
 }
 
-header {
-    background: #333;
+
+.container {
+    width: 90%;
+    max-width: 1320px; /* Slightly wider max-width for modern layouts */
+    margin: auto;
+    /* overflow: hidden; Removed to allow for box shadows etc. if needed */
+}
+
+/* General link styling */
+a {
+    color: var(--primary-text-light);
+    text-decoration: none;
+}
+a:hover {
+    color: var(--youtube-red);
+}
+body.dark-mode a {
+    color: var(--primary-text-dark);
+}
+body.dark-mode a:hover {
+    color: var(--youtube-red);
+}
+
+/* Button base styles */
+button, .button { /* Added .button class for link-styled-as-button */
+    padding: 8px 16px;
+    border-radius: 18px; /* Rounded buttons like YouTube */
+    border: 1px solid var(--border-light);
+    background-color: var(--surface-background-light);
+    color: var(--primary-text-light);
+    cursor: pointer;
+    font-family: var(--font-family-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+button:hover, .button:hover {
+    background-color: #e9e9e9; /* Slightly darker hover for light mode buttons */
+    border-color: #b9b9b9;
+}
+
+body.dark-mode button, body.dark-mode .button {
+    border-color: var(--border-dark);
+    background-color: var(--surface-background-dark);
+    color: var(--primary-text-dark);
+}
+body.dark-mode button:hover, body.dark-mode .button:hover {
+    background-color: #3c3c3c; /* Slightly lighter hover for dark mode buttons */
+    border-color: #555555;
+}
+
+/* Accent button style */
+.accent-button {
+    background-color: var(--youtube-red);
     color: #fff;
-    padding: 1rem 0;
+    border-color: var(--youtube-red);
+}
+.accent-button:hover {
+    background-color: #cc0000; /* Darker red on hover */
+    border-color: #cc0000;
+}
+body.dark-mode .accent-button { /* No change needed for accent button in dark mode usually */
+    color: #fff; /* Ensure text stays white */
+}
+
+
+header {
+    background: var(--background-light);
+    color: var(--primary-text-light);
+    padding: 0.75rem 0; /* Adjusted padding */
     position: sticky;
     top: 0;
     z-index: 1000;
+    border-bottom: 1px solid var(--border-light);
 }
 
 header .container {
@@ -36,144 +136,226 @@ header .container {
 }
 
 header .logo {
-    font-size: 1.5rem;
+    font-size: 1.75rem; /* Slightly larger logo */
     font-weight: bold;
+    color: var(--youtube-red); /* YouTube red for logo */
 }
 
 header .search-bar {
     display: flex;
+    flex-grow: 0.5; /* Allow search bar to take more space */
+    max-width: 600px; /* Max width for search bar */
 }
 
 header .search-bar input[type="text"] {
-    padding: 0.5rem;
-    border: none;
-    border-radius: 3px 0 0 3px;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: 20px 0 0 20px; /* Rounded left edge */
+    flex-grow: 1;
+    font-size: 1rem;
+    background-color: var(--background-light); /* Ensure input bg matches header */
+    color: var(--primary-text-light);
 }
+header .search-bar input[type="text"]:focus {
+    border-color: var(--youtube-red);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--youtube-red); /* Focus ring */
+}
+
 
 header .search-bar button {
-    padding: 0.5rem;
-    background: #555;
-    color: #fff;
-    border: none;
+    padding: 0.6rem 1.2rem;
+    background: var(--surface-background-light);
+    color: var(--primary-text-light);
+    border: 1px solid var(--border-light);
+    border-left: none;
     cursor: pointer;
-    border-radius: 0 3px 3px 0;
+    border-radius: 0 20px 20px 0; /* Rounded right edge */
+    font-size: 1rem;
+}
+header .search-bar button:hover {
+     background-color: #e9e9e9;
+     border-color: #b9b9b9;
 }
 
+
 header .header-actions button {
-    margin-left: 1rem;
-    padding: 0.5rem;
-    background: #555;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 3px;
+    margin-left: 0.75rem; /* Adjusted margin */
+    /* Using base button styles now */
 }
 
 header .profile-icon {
     margin-left: 1rem;
-    padding: 0.5rem 0.8rem;
-    background: #555;
-    color: #fff;
+    width: 36px; /* Fixed size */
+    height: 36px;
+    background: var(--secondary-text-light);
+    color: var(--background-light);
     border-radius: 50%;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
 /* Carousel */
 .carousel {
     padding: 2rem 0;
-    background: #ddd; /* Placeholder */
-    text-align: center;
-    min-height: 300px; /* Placeholder */
+    background: var(--surface-background-light); /* Updated background */
+    /* text-align: center; No longer needed if items are styled individually */
+    /* min-height: 300px; Height will be determined by content */
 }
+.carousel-inner { /* Added for potential flex/grid layout of items */
+    display: flex; /* Simple flex for now, can be more complex */
+    overflow-x: auto; /* Allow horizontal scrolling */
+    gap: 1rem;
+    padding: 1rem 0; /* Padding for scrollbar space if needed */
+}
+.carousel-item {
+    background-color: var(--background-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    min-width: 300px; /* Example width */
+    transition: transform 0.2s ease;
+}
+.carousel-item:hover {
+    transform: translateY(-5px);
+}
+.carousel-item img { /* Ensure img is responsive within item */
+    width: 100%;
+    height: auto; /* Or a fixed aspect ratio height */
+    max-height: 200px; /* Example max height */
+    object-fit: cover;
+    display: block;
+}
+.carousel-caption {
+    padding: 1rem;
+}
+.carousel-caption h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-text-light);
+}
+.carousel-caption p {
+    font-size: 0.9rem;
+    color: var(--secondary-text-light);
+    margin-bottom: 0.75rem;
+}
+
 
 /* Category Navigation */
 #category-nav {
-    background: #444;
-    color: #fff;
+    background: var(--surface-background-light);
+    color: var(--primary-text-light);
     padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 #category-nav .desktop-nav {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5rem; /* Space between dropdowns */
 }
 
 .dropdown {
     position: relative;
     display: inline-block;
-    margin: 0 1rem;
+    /* margin: 0 1rem; Removed, using gap on parent */
 }
 
 .dropdown-btn {
-    background: #555;
-    color: white;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: none;
+    background: transparent; /* Cleaner look */
+    color: var(--primary-text-light);
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    border: none; /* Removed border, or use subtle one */
+    border-radius: 18px; /* Consistent rounding */
     cursor: pointer;
+    transition: background-color 0.2s;
 }
+.dropdown-btn:hover, .dropdown.active .dropdown-btn { /* Style for active/hover */
+    background-color: rgba(0,0,0,0.05);
+}
+
 
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    background-color: var(--background-light); /* Use main background */
+    min-width: 200px; /* Wider dropdown */
+    box-shadow: 0px 4px 12px 0px rgba(0,0,0,0.15); /* Softer shadow */
+    z-index: 100; /* Ensure it's above other content */
+    border-radius: 8px; /* Rounded corners */
+    margin-top: 0.5rem; /* Space from button */
+    padding: 0.5rem 0; /* Padding inside dropdown */
+    overflow: hidden; /* For rounded corners on items */
 }
 
 .dropdown-content a {
-    color: black;
-    padding: 12px 16px;
+    color: var(--primary-text-light);
+    padding: 10px 20px; /* More padding */
     text-decoration: none;
     display: block;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
 }
 
-.dropdown-content a:hover {background-color: #ddd;}
-.dropdown:hover .dropdown-content {display: block;}
-.dropdown:hover .dropdown-btn {background-color: #666;}
+.dropdown-content a:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: var(--youtube-red); /* Accent on hover */
+}
+.dropdown:hover .dropdown-content {display: block;} /* Keep hover for desktop */
+/* JavaScript will handle active state for click-based dropdowns if implemented */
+
 
 /* Mobile Bottom Navigation */
 #mobile-bottom-nav {
-    display: none; /* Hidden by default, shown on mobile */
+    display: none;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: #333;
-    color: #fff;
+    background: var(--background-light); /* Updated background */
+    color: var(--primary-text-light);
     z-index: 1000;
-    padding: 0.5rem 0;
+    padding: 0.25rem 0; /* Reduced padding */
+    border-top: 1px solid var(--border-light);
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
 }
 
 #mobile-bottom-nav button {
     width: 33.33%;
-    padding: 1rem 0;
+    padding: 0.75rem 0; /* Adjusted padding */
     background: transparent;
     border: none;
-    color: #fff;
-    font-size: 1rem;
+    color: var(--secondary-text-light); /* Use secondary for inactive */
+    font-size: 0.8rem; /* Smaller font */
     cursor: pointer;
+    transition: color 0.2s;
+    text-transform: uppercase; /* YouTube often uses uppercase here */
 }
-#mobile-bottom-nav button:hover {
-    background: #555;
+#mobile-bottom-nav button.active, #mobile-bottom-nav button:hover { /* Style for active/hover */
+    color: var(--youtube-red);
 }
+
 
 #mobile-subcategory-drawer {
     display: none;
     position: fixed;
-    bottom: 50px; /* Adjust based on #mobile-bottom-nav height */
+    bottom: 48px; /* Adjust based on #mobile-bottom-nav height (approx 48-50px) */
     left: 0;
     width: 100%;
-    background: #f0f0f0;
-    padding: 1rem;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+    background: var(--background-light); /* Updated background */
+    padding: 0; /* Remove padding, use padding on links */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     z-index: 999;
-    max-height: 50vh;
+    max-height: calc(50vh - 48px); /* Adjust max height */
     overflow-y: auto;
     transform: translateY(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Added visibility transition */
     visibility: hidden;
 }
 #mobile-subcategory-drawer.open {
@@ -182,201 +364,488 @@ header .profile-icon {
 }
 #mobile-subcategory-drawer a {
     display: block;
-    padding: 0.75rem;
-    color: #333;
+    padding: 12px 20px;
+    color: var(--primary-text-light);
     text-decoration: none;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.9rem;
 }
 #mobile-subcategory-drawer a:last-child {
     border-bottom: none;
+}
+#mobile-subcategory-drawer a:hover {
+    background-color: rgba(0,0,0,0.05);
 }
 
 
 /* Video Grid */
 #video-content-section {
-    padding: 2rem 0;
+    padding: 1.5rem 0; /* Adjusted padding */
 }
 
 .view-controls {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem; /* Increased margin */
     text-align: right;
 }
 .view-controls button {
-    padding: 0.5rem 1rem;
+    /* Using base button styles */
     margin-left: 0.5rem;
-    border: 1px solid #ccc;
-    background: #f0f0f0;
-    cursor: pointer;
 }
 .view-controls button.active {
-    background: #555;
+    background: var(--youtube-red);
     color: #fff;
+    border-color: var(--youtube-red);
 }
+
 
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Default for mobile-first */
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Start with larger minmax for modern look */
+    gap: 1.5rem; /* Increased gap */
 }
 
 .video-grid.list-view {
-    grid-template-columns: 1fr; /* Single column for list view */
+    grid-template-columns: 1fr;
 }
 
 .video-item {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    background: var(--background-light); /* Use main background, no border needed if distinct enough */
+    border-radius: 8px; /* Consistent rounding */
     overflow: hidden;
+    /* box-shadow: 0 1px 4px rgba(0,0,0,0.07); Optional subtle shadow */
+    transition: transform 0.2s ease;
 }
+.video-item:hover {
+    /* transform: translateY(-3px); */ /* Optional hover effect */
+    /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
+}
+
 
 .video-item img.thumbnail {
     width: 100%;
-    height: auto;
+    height: auto; /* Let aspect ratio define height, or set fixed height */
+    /* aspect-ratio: 16 / 9; Modern way to set aspect ratio */
+    min-height: 140px; /* Fallback if aspect-ratio not supported / desired */
+    object-fit: cover;
     display: block;
+    border-radius: 8px; /* Rounded corners for thumbnail itself if item has no padding */
+    background-color: #eee; /* Placeholder bg for lazy load */
 }
 .video-item .info {
-    padding: 0.75rem;
+    padding: 0.75rem 0.5rem; /* Adjusted padding, less horizontal if titles are short */
 }
-.video-item .info h3 {
+.video-item .info h3 { /* Video Title in Grid */
     font-size: 1rem;
+    font-weight: 500; /* Medium weight */
+    color: var(--primary-text-light);
     margin-bottom: 0.25rem;
-    white-space: nowrap;
+    line-height: 1.3;
+    /* For multi-line ellipsis (more complex, often needs JS or specific CSS) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Show max 2 lines */
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-height: 2.6em; /* Ensure space for 2 lines */
 }
-.video-item .info p {
+.video-item .info p { /* Channel/Metadata in Grid */
     font-size: 0.8rem;
-    color: #666;
+    color: var(--secondary-text-light);
+    line-height: 1.4;
 }
 
 /* List View Specifics */
 .video-grid.list-view .video-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Align items to top for varying text lengths */
+    background-color: transparent; /* No background for list items if page bg is light */
+    box-shadow: none;
+    border-radius: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light); /* Separator for list items */
 }
+.video-grid.list-view .video-item:last-child {
+    border-bottom: none;
+}
+
 .video-grid.list-view .video-item img.thumbnail {
-    width: 120px; /* Fixed width for thumbnails in list view */
-    height: 70px;
+    width: 180px; /* Larger thumbnail for list view */
+    min-width: 180px; /* Ensure it doesn't shrink */
+    height: 100px; /* Fixed height */
     object-fit: cover;
     margin-right: 1rem;
+    border-radius: 4px; /* Slightly rounded */
 }
 .video-grid.list-view .video-item .info {
     flex-grow: 1;
+    padding: 0; /* No padding for info div itself, handled by children */
+}
+.video-grid.list-view .video-item .info h3 {
+    font-size: 1.1rem; /* Larger title for list view */
+    min-height: auto; /* Reset min-height for list view */
+}
+.video-grid.list-view .video-item .info p {
+    font-size: 0.85rem;
 }
 
 
 /* Video Player Page */
 #video-player-page {
-    padding: 1rem 0;
+    padding: 1rem 0; /* Base padding */
+    background-color: var(--background-light); /* Ensure player page has bg */
 }
+#video-player-page .container { /* Allow player page container to be wider */
+    max-width: 1600px; /* Example: For layouts with sidebars eventually */
+}
+/* Layout for video player page - main content and potential sidebar */
+.player-page-layout {
+    display: flex;
+    gap: 1.5rem;
+}
+.player-main-content {
+    flex: 3; /* Takes more space */
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+.player-sidebar-placeholder { /* Placeholder for related videos etc. */
+    flex: 1;
+    min-width: 0;
+    /* background-color: var(--surface-background-light); */ /* Example styling */
+    /* padding: 1rem; */
+    /* border-radius: 8px; */
+}
+@media (max-width: 992px) { /* Stack layout on smaller screens */
+    .player-page-layout {
+        flex-direction: column;
+    }
+    .player-sidebar-placeholder {
+        display: none; /* Hide sidebar on smaller screens for now */
+    }
+}
+
 
 #sticky-player-container {
     position: sticky;
-    top: 60px; /* Adjust based on header height */
+    top: 60px; /* Adjust based on header height (approx 56-60px) */
     z-index: 900;
-    background-color: #000; /* Background for the player area */
+    background-color: #000;
+    margin-bottom: 1rem; /* Space below player */
+    border-radius: 0; /* Player itself is square, container matches */
+    overflow: hidden; /* If player has rounded corners and container is bg */
+}
+/* Ensure Video.js is responsive within the sticky container */
+#sticky-player-container .video-js {
+    width: 100% !important;
+    /* height: auto !important; Let aspect ratio define height */
+    aspect-ratio: 16 / 9; /* Enforce 16:9 aspect ratio */
 }
 
-/* VideoJS specific styling */
-.video-js {
-    width: 100% !important; /* Ensure it takes full width of its container */
-    height: auto !important; /* Adjust height automatically */
+
+/* VideoJS specific styling - YouTube Accent */
+.video-js .vjs-big-play-button {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 50%;
+    width: 3em;
+    height: 3em;
+    line-height: 3em;
+    font-size: 2.5em; /* Adjust size */
+    transition: background-color 0.2s, transform 0.2s;
+}
+.video-js:hover .vjs-big-play-button, .video-js .vjs-big-play-button:focus {
+    background-color: rgba(255, 0, 0, 0.9); /* YouTube red on hover */
+    transform: scale(1.1);
+}
+.video-js .vjs-control-bar {
+    background-color: rgba(0, 0, 0, 0.3); /* Slightly more transparent */
+    transition: opacity 0.3s;
+}
+.video-js.vjs-user-inactive .vjs-control-bar {
+    opacity: 0;
+}
+.video-js.vjs-has-started.vjs-user-active .vjs-control-bar {
+    opacity: 1;
+}
+
+.video-js .vjs-play-progress, .video-js .vjs-volume-level {
+    background: var(--youtube-red) !important; /* Important to override default */
+}
+.video-js .vjs-slider { /* Slider background */
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 
 #video-info-container {
-    padding-top: 1rem;
+    padding-top: 0; /* Removed top padding, handled by player margin */
 }
-#video-info-container h2 {
+#video-info-container h2#video-title-player { /* Video Title on Player Page */
+    font-size: 1.4rem; /* Slightly smaller than YT but prominent */
+    font-weight: 600;
+    color: var(--primary-text-light);
     margin-bottom: 0.5rem;
+    line-height: 1.3;
 }
-#server-quality-selector, #subtitle-selector, #episode-navigation {
-    margin-top: 1rem;
+/* Metadata row (creator, stats, buttons) */
+.video-metadata-row {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-light);
+}
+.video-creator-info { /* Placeholder for avatar, name, sub count */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--secondary-text-light);
+}
+.video-creator-info .avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: var(--secondary-text-light);
+    border-radius: 50%;
+}
+.video-actions { /* Container for like, share, subscribe buttons */
+    display: flex;
+    gap: 0.5rem;
+}
+.video-actions button { /* Base style for action buttons */
+    /* Use default button styles */
+    font-size: 0.85rem;
+    padding: 6px 12px;
+}
+#subscribe-btn { /* Specific style for subscribe button */
+    /* Use .accent-button class */
+}
+
+
+#video-description-player {
+    background-color: var(--surface-background-light);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--primary-text-light); /* Description text color */
     margin-bottom: 1rem;
 }
+#video-description-player strong { /* For "Show more/less" if implemented */
+    cursor: pointer;
+    color: var(--primary-text-light);
+    font-weight: 500;
+}
+
+
+#server-quality-selector, #subtitle-selector, #episode-navigation {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem; /* Increased margin */
+    display: flex; /* Align items neatly */
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+#server-quality-selector label, #subtitle-selector label {
+    font-size: 0.9rem;
+    color: var(--secondary-text-light);
+}
 #server-quality-selector select, #subtitle-selector select {
-    padding: 0.5rem;
-    margin-left: 0.5rem;
+    padding: 8px 12px;
+    border-radius: 18px; /* Rounded select */
+    border: 1px solid var(--border-light);
+    background-color: var(--surface-background-light);
+    color: var(--primary-text-light);
+    font-size: 0.9rem;
+    min-width: 120px; /* Ensure decent width */
+}
+#episode-navigation button {
+    /* Use default button styles */
+    font-size: 0.85rem;
+}
+#episode-navigation #episode-info {
+    font-size: 0.9rem;
+    color: var(--secondary-text-light);
+    padding: 0 0.5rem;
+}
+
+/* Comments Section Placeholder */
+#comments-section h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-light);
 }
 
 
 /* Dark Mode */
 body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
+    background-color: var(--background-dark);
+    color: var(--primary-text-dark);
 }
 body.dark-mode header {
-    background: #1e1e1e;
-    color: #e0e0e0;
+    background: var(--background-dark); /* Match body background for seamless look */
+    color: var(--primary-text-dark);
+    border-bottom-color: var(--border-dark);
+}
+body.dark-mode header .logo {
+    /* color: var(--youtube-red); Remains same */
 }
 body.dark-mode header .search-bar input[type="text"] {
-    background-color: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
+    background-color: var(--surface-background-dark); /* Darker input field */
+    color: var(--primary-text-dark);
+    border-color: var(--border-dark);
 }
-body.dark-mode header .search-bar button,
+body.dark-mode header .search-bar input[type="text"]:focus {
+    border-color: var(--youtube-red);
+    box-shadow: 0 0 0 1px var(--youtube-red);
+}
+body.dark-mode header .search-bar button {
+    background: var(--surface-background-dark);
+    color: var(--primary-text-dark);
+    border-color: var(--border-dark);
+}
+body.dark-mode header .search-bar button:hover {
+     background-color: #3c3c3c;
+     border-color: #555555;
+}
+
 body.dark-mode header .header-actions button {
-    background: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
+    /* Uses base dark mode button styles */
 }
 body.dark-mode header .profile-icon {
-    background: #333;
-    color: #e0e0e0;
+    background: var(--secondary-text-dark);
+    color: var(--background-dark);
 }
+
+body.dark-mode .carousel {
+    background: var(--background-dark); /* Carousel bg matches page bg in dark mode */
+}
+body.dark-mode .carousel-item {
+    background-color: var(--surface-background-dark); /* Carousel items distinct */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25); /* Darker shadow */
+}
+body.dark-mode .carousel-caption h3 {
+    color: var(--primary-text-dark);
+}
+body.dark-mode .carousel-caption p {
+    color: var(--secondary-text-dark);
+}
+
+
 body.dark-mode #category-nav {
-    background: #2c2c2c;
+    background: var(--surface-background-dark);
+    color: var(--primary-text-dark);
+    border-bottom-color: var(--border-dark);
 }
 body.dark-mode .dropdown-btn {
-    background: #333;
-    color: #e0e0e0;
+    color: var(--primary-text-dark);
+}
+body.dark-mode .dropdown-btn:hover, body.dark-mode .dropdown.active .dropdown-btn {
+    background-color: rgba(255,255,255,0.08);
 }
 body.dark-mode .dropdown-content {
-    background-color: #333;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    background-color: var(--surface-background-dark); /* Darker dropdown bg */
+    box-shadow: 0px 4px 12px 0px rgba(0,0,0,0.5); /* Stronger shadow for dark mode */
+    border: 1px solid var(--border-dark); /* Subtle border for dropdown */
 }
 body.dark-mode .dropdown-content a {
-    color: #e0e0e0;
+    color: var(--primary-text-dark);
 }
 body.dark-mode .dropdown-content a:hover {
-    background-color: #555;
+    background-color: rgba(255,255,255,0.08);
+    /* color: var(--youtube-red); Remains same */
 }
-body.dark-mode .video-item {
-    background: #1e1e1e;
-    border-color: #333;
-}
-body.dark-mode .video-item .info h3 {
-    color: #f5f5f5;
-}
-body.dark-mode .video-item .info p {
-    color: #aaa;
-}
-body.dark-mode .view-controls button {
-    background: #333;
-    color: #e0e0e0;
-    border-color: #555;
-}
-body.dark-mode .view-controls button.active {
-    background: #555;
-    color: #fff;
-}
+
 body.dark-mode #mobile-bottom-nav {
-    background: #1e1e1e;
+    background: var(--surface-background-dark);
+    color: var(--primary-text-dark);
+    border-top-color: var(--border-dark);
 }
 body.dark-mode #mobile-bottom-nav button {
-    color: #e0e0e0;
+    color: var(--secondary-text-dark);
 }
-body.dark-mode #mobile-bottom-nav button:hover {
-    background: #333;
+body.dark-mode #mobile-bottom-nav button.active, body.dark-mode #mobile-bottom-nav button:hover {
+    color: var(--youtube-red);
 }
+
 body.dark-mode #mobile-subcategory-drawer {
-    background: #2c2c2c;
-    color: #e0e0e0;
+    background: var(--surface-background-dark); /* Darker drawer */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
 }
 body.dark-mode #mobile-subcategory-drawer a {
-    color: #e0e0e0;
-    border-bottom: 1px solid #444;
+    color: var(--primary-text-dark);
+    border-bottom-color: var(--border-dark);
+}
+body.dark-mode #mobile-subcategory-drawer a:hover {
+    background-color: rgba(255,255,255,0.08);
+}
+
+
+body.dark-mode .view-controls button {
+    /* Uses base dark mode button styles */
+}
+body.dark-mode .view-controls button.active {
+    background: var(--youtube-red);
+    color: #fff; /* Ensure text is white on red */
+    border-color: var(--youtube-red);
+}
+
+body.dark-mode .video-item {
+    background: var(--surface-background-dark); /* Items distinct from page bg */
+    /* box-shadow: 0 1px 4px rgba(0,0,0,0.2); */
+}
+body.dark-mode .video-item .info h3 {
+    color: var(--primary-text-dark);
+}
+body.dark-mode .video-item .info p {
+    color: var(--secondary-text-dark);
+}
+body.dark-mode .video-grid.list-view .video-item {
+    background-color: transparent;
+    border-bottom-color: var(--border-dark);
+}
+
+
+body.dark-mode #video-player-page {
+    background-color: var(--background-dark);
+}
+body.dark-mode #video-info-container h2#video-title-player {
+    color: var(--primary-text-dark);
+}
+body.dark-mode .video-metadata-row {
+    border-bottom-color: var(--border-dark);
+}
+body.dark-mode .video-creator-info {
+    color: var(--secondary-text-dark);
+}
+body.dark-mode .video-creator-info .avatar-placeholder {
+    background-color: var(--secondary-text-dark);
+}
+/* Dark mode for video action buttons handled by base button dark styles */
+
+body.dark-mode #video-description-player {
+    background-color: var(--surface-background-dark);
+    color: var(--primary-text-dark);
+}
+body.dark-mode #video-description-player strong {
+    color: var(--primary-text-dark);
+}
+
+body.dark-mode #server-quality-selector label,
+body.dark-mode #subtitle-selector label,
+body.dark-mode #episode-navigation #episode-info {
+    color: var(--secondary-text-dark);
+}
+body.dark-mode #server-quality-selector select,
+body.dark-mode #subtitle-selector select {
+    border-color: var(--border-dark);
+    background-color: var(--surface-background-dark); /* Darker selects */
+    color: var(--primary-text-dark);
+}
+/* Dark mode for episode navigation buttons handled by base button dark styles */
+
+body.dark-mode #comments-section h3 {
+    border-bottom-color: var(--border-dark);
 }
 
 
@@ -384,11 +853,14 @@ footer {
     text-align: center;
     padding: 2rem 0;
     margin-top: 2rem;
-    background: #333;
-    color: #fff;
+    background: var(--surface-background-light); /* Lighter footer */
+    color: var(--secondary-text-light); /* Softer text */
+    border-top: 1px solid var(--border-light);
 }
 body.dark-mode footer {
-    background: #1e1e1e;
+    background: var(--surface-background-dark);
+    color: var(--secondary-text-dark);
+    border-top-color: var(--border-dark);
 }
 
 

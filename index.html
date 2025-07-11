@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Streaming Service</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
 </head>
@@ -87,32 +90,42 @@
 
     <!-- Video Player Page (Initially hidden or separate logic) -->
     <div id="video-player-page" style="display: none;">
-        <div id="sticky-player-container">
-            <video
-                id="my-video"
-                class="video-js vjs-big-play-centered"
-                controls
-                preload="auto"
-                width="640"
-                height="360"
-                data-setup='{ "fluid": true }'
-            >
-                <p class="vjs-no-js">
-                    To view this video please enable JavaScript, and consider upgrading to a
-                    web browser that
-                    <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-                </p>
-            </video>
-        </div>
-        <div id="video-info-container" class="container">
-            <h2 id="video-title-player">Video Title</h2>
-            <div id="video-creator-info">Creator Info</div>
-            <div id="video-stats">Views, Likes, etc.</div>
-            <button id="subscribe-btn">Subscribe</button>
-            <div id="video-description-player">Video description...</div>
+        <div class="container player-page-layout"> <!-- Added player-page-layout -->
+            <div class="player-main-content"> <!-- Added player-main-content -->
+                <div id="sticky-player-container">
+                    <video
+                        id="my-video"
+                        class="video-js vjs-big-play-centered"
+                        controls
+                        preload="auto"
+                        data-setup='{ "fluid": true }'
+                        >
+                        <!-- width/height removed to let CSS aspect-ratio control it -->
+                        <p class="vjs-no-js">
+                            To view this video please enable JavaScript, and consider upgrading to a
+                            web browser that
+                            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                        </p>
+                    </video>
+                </div>
+                <div id="video-info-container"> <!-- No longer needs class="container" as parent has it -->
+                    <h2 id="video-title-player">Video Title</h2>
+                    <div class="video-metadata-row">
+                        <div id="video-creator-info" class="video-creator-info">
+                            <div class="avatar-placeholder"></div>
+                            <span>Creator Name</span>
+                            <!-- More details like sub count can be added by JS -->
+                        </div>
+                        <div class="video-actions">
+                            <!-- Placeholder for like/dislike/share -->
+                            <button id="subscribe-btn" class="accent-button">Subscribe</button>
+                        </div>
+                    </div>
+                    <div id="video-stats">Views, Likes, etc. (Populated by JS if available)</div>
+                    <div id="video-description-player">Video description...</div>
 
-            <div id="episode-navigation" style="display: none;">
-                <button id="prev-episode-btn">Previous Episode</button>
+                    <div id="episode-navigation" style="display: none;">
+                        <button id="prev-episode-btn">Previous Episode</button>
                 <span id="episode-info">S1 E1</span>
                 <button id="next-episode-btn">Next Episode</button>
             </div>
@@ -134,8 +147,14 @@
                 <h3>Comments</h3>
                 <!-- Comments will be loaded here -->
             </div>
-        </div>
-    </div>
+                </div> <!-- End of #video-info-container -->
+            </div> <!-- End of .player-main-content -->
+            <div class="player-sidebar-placeholder">
+                <!-- Related videos or other content could go here -->
+                <h4>Related Videos (Placeholder)</h4>
+            </div>
+        </div> <!-- End of .player-page-layout -->
+    </div> <!-- End of #video-player-page -->
 
     <footer>
         <div class="container">
