@@ -1,22 +1,46 @@
 /* Global Variables & Basic Reset */
 :root {
-    --youtube-red: #FF0000;
+    /* Netflix Inspired Theme - Defaulting to Dark */
+    --netflix-red: #E50914;
+    --netflix-charcoal: #141414; /* Common Netflix background */
+    --netflix-surface-dark: #181818; /* Slightly lighter surface for cards/elements */
+    --netflix-text-primary-dark: #ffffff;
+    --netflix-text-secondary-dark: #b3b3b3; /* Softer secondary text */
+    --netflix-border-dark: #282828; /* Subtle borders */
+
+    /* YouTube Player Specific Accent (to be used only on player page) */
+    --youtube-player-red: #FF0000;
+
+    /* Light Theme (Kept for toggle, but less emphasis) */
     --primary-text-light: #0f0f0f;
     --secondary-text-light: #606060;
-    --background-light: #ffffff;
-    --surface-background-light: #f9f9f9; /* For cards, dropdowns etc. */
-    --border-light: #cccccc;
+    --background-light: #f4f4f4; /* Slightly off-white for light theme */
+    --surface-background-light: #ffffff; /* White surfaces in light mode */
+    --border-light: #dcdcdc;
 
-    --primary-text-dark: #f1f1f1;
-    --secondary-text-dark: #aaaaaa;
-    --background-dark: #0f0f0f;
-    --surface-background-dark: #222222; /* For cards, dropdowns etc. */
-    --border-dark: #383838;
-
-    --font-family-primary: 'Roboto', 'Arial', sans-serif;
-    --base-font-size: 16px; /* Adjusted for better scaling */
+    /* Font Stack - More Netflix-like (Helvetica Neue as primary, common fallbacks) */
+    --font-family-primary: 'Helvetica Neue', 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    --base-font-size: 1rem; /* 16px default */
     --line-height-base: 1.5;
+
+    /* Assigning default theme (dark) */
+    --current-background: var(--netflix-charcoal);
+    --current-surface: var(--netflix-surface-dark);
+    --current-text-primary: var(--netflix-text-primary-dark);
+    --current-text-secondary: var(--netflix-text-secondary-dark);
+    --current-border: var(--netflix-border-dark);
+    --current-accent: var(--netflix-red);
 }
+
+body.light-mode { /* Updated light mode variables */
+    --current-background: var(--background-light);
+    --current-surface: var(--surface-background-light);
+    --current-text-primary: var(--primary-text-light);
+    --current-text-secondary: var(--secondary-text-light);
+    --current-border: var(--border-light);
+    /* --current-accent: var(--netflix-red); Accent can remain Netflix red or change for light mode if desired */
+}
+
 
 * {
     margin: 0;
@@ -28,106 +52,89 @@ body {
     font-family: var(--font-family-primary);
     font-size: var(--base-font-size);
     line-height: var(--line-height-base);
-    background-color: var(--background-light);
-    color: var(--primary-text-light);
+    background-color: var(--current-background); /* Uses new current- variables */
+    color: var(--current-text-primary); /* Uses new current- variables */
     transition: background-color 0.3s, color 0.3s;
 }
 
 /* Apply a more modern scrollbar if browser supports */
 body::-webkit-scrollbar {
-    width: 10px; /* Slightly wider for desktop */
+    width: 10px;
 }
 body::-webkit-scrollbar-track {
-    background: var(--surface-background-light); /* Use surface for track */
+    background: var(--current-surface); /* Use current surface for track */
 }
 body::-webkit-scrollbar-thumb {
-    background-color: var(--secondary-text-light); /* Adjusted thumb color */
+    background-color: var(--current-text-secondary);
     border-radius: 10px;
-    border: 2px solid var(--surface-background-light); /* Creates padding around thumb */
+    border: 2px solid var(--current-surface);
 }
-body.dark-mode::-webkit-scrollbar-track {
-    background: var(--surface-background-dark);
-}
-body.dark-mode::-webkit-scrollbar-thumb {
-    background-color: var(--secondary-text-dark);
-    border: 2px solid var(--surface-background-dark);
-}
+/* No need for separate dark-mode scrollbar styles if body.light-mode correctly updates current- vars */
 
 
 .container {
     width: 90%;
-    max-width: 1320px; /* Slightly wider max-width for modern layouts */
+    max-width: 1320px;
     margin: auto;
-    /* overflow: hidden; Removed to allow for box shadows etc. if needed */
 }
 
 /* General link styling */
 a {
-    color: var(--primary-text-light);
+    color: var(--current-text-primary);
     text-decoration: none;
 }
 a:hover {
-    color: var(--youtube-red);
+    color: var(--current-accent); /* Netflix Red for general hover */
 }
-body.dark-mode a {
-    color: var(--primary-text-dark);
-}
-body.dark-mode a:hover {
-    color: var(--youtube-red);
-}
+/* body.dark-mode a rules are now covered by current- vars */
 
 /* Button base styles */
-button, .button { /* Added .button class for link-styled-as-button */
+button, .button {
     padding: 8px 16px;
-    border-radius: 18px; /* Rounded buttons like YouTube */
-    border: 1px solid var(--border-light);
-    background-color: var(--surface-background-light);
-    color: var(--primary-text-light);
+    border-radius: 4px; /* Netflix buttons are often less rounded */
+    border: 1px solid var(--current-border);
+    background-color: rgba(128, 128, 128, 0.2); /* Semi-transparent grey, common in Netflix */
+    color: var(--current-text-primary);
     cursor: pointer;
     font-family: var(--font-family-primary);
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 500; /* Or 700 for bold like Netflix */
     transition: background-color 0.2s ease;
 }
 button:hover, .button:hover {
-    background-color: #e9e9e9; /* Slightly darker hover for light mode buttons */
-    border-color: #b9b9b9;
+    background-color: rgba(128, 128, 128, 0.3);
 }
+/* body.dark-mode button rules now covered by current- vars */
 
-body.dark-mode button, body.dark-mode .button {
-    border-color: var(--border-dark);
-    background-color: var(--surface-background-dark);
-    color: var(--primary-text-dark);
-}
-body.dark-mode button:hover, body.dark-mode .button:hover {
-    background-color: #3c3c3c; /* Slightly lighter hover for dark mode buttons */
-    border-color: #555555;
-}
-
-/* Accent button style */
+/* Accent button style (e.g. Subscribe, Play) */
 .accent-button {
-    background-color: var(--youtube-red);
-    color: #fff;
-    border-color: var(--youtube-red);
+    background-color: var(--current-accent); /* Netflix Red */
+    color: var(--netflix-text-primary-dark); /* White text on red */
+    border-color: var(--current-accent);
+    font-weight: 700; /* Bolder for primary actions */
 }
 .accent-button:hover {
-    background-color: #cc0000; /* Darker red on hover */
-    border-color: #cc0000;
+    background-color: #f40612; /* Slightly brighter red on hover, common Netflix pattern */
+    border-color: #f40612;
 }
-body.dark-mode .accent-button { /* No change needed for accent button in dark mode usually */
-    color: #fff; /* Ensure text stays white */
-}
+/* body.dark-mode .accent-button also covered */
 
 
 header {
-    background: var(--background-light);
-    color: var(--primary-text-light);
-    padding: 0.75rem 0; /* Adjusted padding */
-    position: sticky;
+    background: transparent; /* Netflix header is often transparent overlaying content or just part of dark bg */
+    color: var(--current-text-primary);
+    padding: 1rem 0; /* Increased padding for more cinematic feel */
+    position: sticky; /* Or fixed if it overlays content */
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: none; /* Netflix header usually no border */
+    transition: background-color 0.3s ease; /* For scroll effect */
 }
+/* Add a class on scroll to change header background */
+header.scrolled {
+    background-color: var(--netflix-charcoal); /* Solid background on scroll */
+}
+
 
 header .container {
     display: flex;
@@ -136,61 +143,69 @@ header .container {
 }
 
 header .logo {
-    font-size: 1.75rem; /* Slightly larger logo */
-    font-weight: bold;
-    color: var(--youtube-red); /* YouTube red for logo */
+    font-size: 1.75rem;
+    font-weight: bold; /* Or a specific font-weight if using Netflix Sans like font */
+    color: var(--netflix-red);
+    text-transform: uppercase; /* Netflix logo is uppercase */
 }
 
 header .search-bar {
     display: flex;
-    flex-grow: 0.5; /* Allow search bar to take more space */
-    max-width: 600px; /* Max width for search bar */
+    flex-grow: 0.5;
+    max-width: 600px;
 }
 
 header .search-bar input[type="text"] {
     padding: 0.6rem 1rem;
-    border: 1px solid var(--border-light);
-    border-radius: 20px 0 0 20px; /* Rounded left edge */
+    border: 1px solid var(--current-border);
+    border-radius: 2px 0 0 2px; /* Sharper edges */
     flex-grow: 1;
     font-size: 1rem;
-    background-color: var(--background-light); /* Ensure input bg matches header */
-    color: var(--primary-text-light);
+    background-color: rgba(0,0,0,0.5); /* Dark semi-transparent input */
+    color: var(--current-text-primary);
 }
 header .search-bar input[type="text"]:focus {
-    border-color: var(--youtube-red);
+    border-color: var(--current-accent);
     outline: none;
-    box-shadow: 0 0 0 1px var(--youtube-red); /* Focus ring */
+    box-shadow: 0 0 0 1px var(--current-accent);
 }
 
 
 header .search-bar button {
     padding: 0.6rem 1.2rem;
-    background: var(--surface-background-light);
-    color: var(--primary-text-light);
-    border: 1px solid var(--border-light);
+    background: var(--current-surface);
+    color: var(--current-text-primary);
+    border: 1px solid var(--current-border);
     border-left: none;
     cursor: pointer;
-    border-radius: 0 20px 20px 0; /* Rounded right edge */
+    border-radius: 0 2px 2px 0; /* Sharper edges */
     font-size: 1rem;
 }
 header .search-bar button:hover {
-     background-color: #e9e9e9;
-     border-color: #b9b9b9;
+     background-color: var(--current-accent);
+     color: var(--netflix-text-primary-dark);
+     border-color: var(--current-accent);
 }
 
 
 header .header-actions button {
-    margin-left: 0.75rem; /* Adjusted margin */
-    /* Using base button styles now */
+    margin-left: 0.75rem;
+    background-color: transparent; /* Buttons in header often just text/icon */
+    border: none;
 }
+header .header-actions button:hover {
+    color: var(--current-accent);
+    background-color: transparent;
+}
+
 
 header .profile-icon {
     margin-left: 1rem;
-    width: 36px; /* Fixed size */
+    width: 36px;
     height: 36px;
-    background: var(--secondary-text-light);
-    color: var(--background-light);
-    border-radius: 50%;
+    background: var(--netflix-red); /* Profile icon often red or an image */
+    color: var(--netflix-text-primary-dark);
+    border-radius: 4px; /* Netflix uses slightly rounded squares for profiles */
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -199,669 +214,378 @@ header .profile-icon {
     font-size: 1.1rem;
 }
 
-/* Carousel */
-.carousel {
-    padding: 2rem 0;
-    background: var(--surface-background-light); /* Updated background */
-    /* text-align: center; No longer needed if items are styled individually */
-    /* min-height: 300px; Height will be determined by content */
+/* Carousel (Now Netflix Rows) */
+.carousel { /* This class might be better renamed to .content-rows-container or similar */
+    padding: 1rem 0 2rem 0; /* Adjusted padding */
+    background: var(--current-background); /* No separate background, part of page */
 }
-.carousel-inner { /* Added for potential flex/grid layout of items */
-    display: flex; /* Simple flex for now, can be more complex */
-    overflow-x: auto; /* Allow horizontal scrolling */
-    gap: 1rem;
-    padding: 1rem 0; /* Padding for scrollbar space if needed */
+.carousel-inner {
+    /* This will now represent a single "Row" */
+    /* display: flex; Will be handled by individual row styling */
+    /* overflow-x: auto; Will be handled by individual row styling */
+    /* gap: 1rem; */
+    padding: 0;
+    margin-bottom: 2rem; /* Space between rows */
 }
-.carousel-item {
-    background-color: var(--background-light);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    min-width: 300px; /* Example width */
-    transition: transform 0.2s ease;
-}
-.carousel-item:hover {
-    transform: translateY(-5px);
-}
-.carousel-item img { /* Ensure img is responsive within item */
-    width: 100%;
-    height: auto; /* Or a fixed aspect ratio height */
-    max-height: 200px; /* Example max height */
-    object-fit: cover;
-    display: block;
-}
-.carousel-caption {
-    padding: 1rem;
-}
-.carousel-caption h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-    color: var(--primary-text-light);
-}
-.carousel-caption p {
-    font-size: 0.9rem;
-    color: var(--secondary-text-light);
+.carousel-inner .row-title { /* New class for row titles */
+    font-size: 1.4rem;
+    font-weight: 700; /* Bold titles */
+    color: var(--current-text-primary);
+    margin-left: 4%; /* Align with typical Netflix content indent */
     margin-bottom: 0.75rem;
 }
-
-
-/* Category Navigation */
-#category-nav {
-    background: var(--surface-background-light);
-    color: var(--primary-text-light);
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border-light);
-}
-
-#category-nav .desktop-nav {
+.row-items { /* New container for horizontally scrolling items within a row */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem; /* Space between dropdowns */
+    overflow-x: auto;
+    overflow-y: hidden; /* Hide vertical scrollbar if items have varying heights due to hover */
+    padding: 0 4% 1rem 4%; /* Padding to match title indent and for scrollbar */
+    gap: 0.5rem; /* Smaller gap between items in a row */
 }
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-    /* margin: 0 1rem; Removed, using gap on parent */
-}
-
-.dropdown-btn {
-    background: transparent; /* Cleaner look */
-    color: var(--primary-text-light);
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    border: none; /* Removed border, or use subtle one */
-    border-radius: 18px; /* Consistent rounding */
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-.dropdown-btn:hover, .dropdown.active .dropdown-btn { /* Style for active/hover */
-    background-color: rgba(0,0,0,0.05);
-}
-
-
-.dropdown-content {
+/* Hide scrollbar for row items, navigation will be via arrows or touch scroll */
+.row-items::-webkit-scrollbar {
     display: none;
-    position: absolute;
-    background-color: var(--background-light); /* Use main background */
-    min-width: 200px; /* Wider dropdown */
-    box-shadow: 0px 4px 12px 0px rgba(0,0,0,0.15); /* Softer shadow */
-    z-index: 100; /* Ensure it's above other content */
-    border-radius: 8px; /* Rounded corners */
-    margin-top: 0.5rem; /* Space from button */
-    padding: 0.5rem 0; /* Padding inside dropdown */
-    overflow: hidden; /* For rounded corners on items */
+}
+.row-items {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
-.dropdown-content a {
-    color: var(--primary-text-light);
-    padding: 10px 20px; /* More padding */
-    text-decoration: none;
+
+.carousel-item { /* Represents a single movie/show card in a row */
+    background-color: var(--current-surface); /* Dark surface for cards */
+    border-radius: 4px; /* Subtle rounding */
+    overflow: visible; /* Allow hover effects to expand slightly outside bounds */
+    /* box-shadow: 0 2px 8px rgba(0,0,0,0.1); No shadow by default, relies on bg contrast */
+    min-width: 220px; /* Adjust based on desired number of items visible */
+    max-width: 280px;
+    flex-shrink: 0; /* Prevent items from shrinking */
+    transition: transform 0.3s cubic-bezier(0.5, 0, 0.1, 1), z-index 0.3s; /* Smooth transform, z-index for overlap */
+    position: relative;
+    z-index: 1;
+}
+.carousel-item:hover {
+    transform: scale(1.15); /* Enlarge item on hover */
+    z-index: 10; /* Bring hovered item to front */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5); /* Add shadow on hover */
+}
+.carousel-item img.thumbnail {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9; /* Enforce aspect ratio */
+    object-fit: cover;
     display: block;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
+    border-radius: 4px; /* Match item rounding */
+}
+.carousel-caption { /* Info appearing on hover, or below */
+    padding: 0.75rem;
+    position: absolute; /* Example: overlay on hover, or position below */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); /* Gradient for text readability */
+    opacity: 0; /* Hidden by default, show on hover */
+    transition: opacity 0.3s ease;
+    border-radius: 0 0 4px 4px;
+}
+.carousel-item:hover .carousel-caption {
+    opacity: 1;
 }
 
-.dropdown-content a:hover {
-    background-color: rgba(0,0,0,0.05);
-    color: var(--youtube-red); /* Accent on hover */
+.carousel-caption h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--netflix-text-primary-dark); /* Always white for readability on gradient */
+    font-weight: 700;
 }
-.dropdown:hover .dropdown-content {display: block;} /* Keep hover for desktop */
-/* JavaScript will handle active state for click-based dropdowns if implemented */
+.carousel-caption p { /* e.g. for genre or short info */
+    font-size: 0.8rem;
+    color: var(--netflix-text-secondary-dark); /* Light grey for secondary info */
+    margin-bottom: 0.5rem;
+}
+.carousel-caption .play-carousel-btn { /* Play button inside caption */
+    /* Use base button styles, maybe smaller */
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    background-color: var(--netflix-text-primary-dark); /* White button */
+    color: var(--netflix-charcoal); /* Dark text */
+    border: none;
+}
+.carousel-caption .play-carousel-btn:hover {
+    background-color: var(--netflix-red);
+    color: var(--netflix-text-primary-dark);
+}
+
+
+
+/* Category Navigation (Desktop Dropdowns - Netflix style is usually simpler, maybe not dropdowns) */
+/* This section might be removed or heavily simplified for a Netflix feel */
+#category-nav {
+    background: var(--current-surface);
+    color: var(--current-text-primary);
+    padding: 0.5rem 4%; /* Align with row content */
+    border-bottom: 1px solid var(--current-border);
+    display: none; /* Hiding for now, Netflix relies less on this type of nav */
+}
+
+/* ... (rest of #category-nav, .dropdown, .dropdown-btn, .dropdown-content styling might be removed or adapted) */
+/* For now, let's assume it's hidden or will be replaced by simpler header links */
 
 
 /* Mobile Bottom Navigation */
+/* Netflix mobile UI uses a bottom tab bar, but for different sections (Home, Search, Downloads, etc.) */
+/* Our current bottom nav is for categories, which is less Netflix-like. */
+/* Consider removing or re-purposing if aiming for strong Netflix feel. For now, just restyle. */
 #mobile-bottom-nav {
     display: none;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: var(--background-light); /* Updated background */
-    color: var(--primary-text-light);
+    background: var(--netflix-charcoal);
+    color: var(--current-text-primary);
     z-index: 1000;
-    padding: 0.25rem 0; /* Reduced padding */
-    border-top: 1px solid var(--border-light);
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+    padding: 0.25rem 0;
+    border-top: 1px solid var(--netflix-border-dark);
 }
 
 #mobile-bottom-nav button {
     width: 33.33%;
-    padding: 0.75rem 0; /* Adjusted padding */
+    padding: 0.75rem 0;
     background: transparent;
     border: none;
-    color: var(--secondary-text-light); /* Use secondary for inactive */
-    font-size: 0.8rem; /* Smaller font */
+    color: var(--current-text-secondary);
+    font-size: 0.7rem; /* Smaller font for mobile tabs */
     cursor: pointer;
     transition: color 0.2s;
-    text-transform: uppercase; /* YouTube often uses uppercase here */
+    text-transform: none; /* Netflix tabs are not usually uppercase */
 }
-#mobile-bottom-nav button.active, #mobile-bottom-nav button:hover { /* Style for active/hover */
-    color: var(--youtube-red);
+#mobile-bottom-nav button.active, #mobile-bottom-nav button:hover {
+    color: var(--current-text-primary); /* Active tab is brighter white */
 }
+/* Hiding subcategory drawer as it doesn't fit Netflix model well */
+#mobile-subcategory-drawer { display: none !important; }
 
 
-#mobile-subcategory-drawer {
-    display: none;
-    position: fixed;
-    bottom: 48px; /* Adjust based on #mobile-bottom-nav height (approx 48-50px) */
-    left: 0;
-    width: 100%;
-    background: var(--background-light); /* Updated background */
-    padding: 0; /* Remove padding, use padding on links */
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-    z-index: 999;
-    max-height: calc(50vh - 48px); /* Adjust max height */
-    overflow-y: auto;
-    transform: translateY(100%);
-    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Added visibility transition */
-    visibility: hidden;
-}
-#mobile-subcategory-drawer.open {
-    transform: translateY(0);
-    visibility: visible;
-}
-#mobile-subcategory-drawer a {
-    display: block;
-    padding: 12px 20px;
-    color: var(--primary-text-light);
-    text-decoration: none;
-    border-bottom: 1px solid var(--border-light);
-    font-size: 0.9rem;
-}
-#mobile-subcategory-drawer a:last-child {
-    border-bottom: none;
-}
-#mobile-subcategory-drawer a:hover {
-    background-color: rgba(0,0,0,0.05);
-}
-
-
-/* Video Grid */
+/* Video Grid (Main page display style - will be part of Rows now) */
+/* This section needs to be re-thought. Netflix doesn't typically have a generic "grid" page like this. */
+/* Content is primarily in rows. If we keep a "all movies" page, it might use this, but styled differently. */
 #video-content-section {
-    padding: 1.5rem 0; /* Adjusted padding */
+    padding: 1.5rem 0;
+    /* This whole section might be deprecated in favor of row-based display */
 }
 
-.view-controls {
-    margin-bottom: 1.5rem; /* Increased margin */
+.view-controls { /* Less relevant if not using a general grid view */
+    margin-bottom: 1.5rem;
     text-align: right;
-}
-.view-controls button {
-    /* Using base button styles */
-    margin-left: 0.5rem;
-}
-.view-controls button.active {
-    background: var(--youtube-red);
-    color: #fff;
-    border-color: var(--youtube-red);
+    display: none; /* Hiding for now */
 }
 
-
-.video-grid {
+.video-grid { /* If used for e.g. "Search Results" or specific category page */
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Start with larger minmax for modern look */
-    gap: 1.5rem; /* Increased gap */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Smaller items if it's a dense grid */
+    gap: 1rem; /* Smaller gap */
+    padding: 0 4%; /* Align with rows */
 }
 
-.video-grid.list-view {
-    grid-template-columns: 1fr;
-}
-
-.video-item {
-    background: var(--background-light); /* Use main background, no border needed if distinct enough */
-    border-radius: 8px; /* Consistent rounding */
-    overflow: hidden;
-    /* box-shadow: 0 1px 4px rgba(0,0,0,0.07); Optional subtle shadow */
-    transition: transform 0.2s ease;
-}
-.video-item:hover {
-    /* transform: translateY(-3px); */ /* Optional hover effect */
-    /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
-}
+/* .video-item styling will be superseded by .carousel-item styling for rows */
+/* If .video-item is kept for a separate grid page, it should also be styled like .carousel-item */
 
 
-.video-item img.thumbnail {
-    width: 100%;
-    height: auto; /* Let aspect ratio define height, or set fixed height */
-    /* aspect-ratio: 16 / 9; Modern way to set aspect ratio */
-    min-height: 140px; /* Fallback if aspect-ratio not supported / desired */
-    object-fit: cover;
-    display: block;
-    border-radius: 8px; /* Rounded corners for thumbnail itself if item has no padding */
-    background-color: #eee; /* Placeholder bg for lazy load */
-}
-.video-item .info {
-    padding: 0.75rem 0.5rem; /* Adjusted padding, less horizontal if titles are short */
-}
-.video-item .info h3 { /* Video Title in Grid */
-    font-size: 1rem;
-    font-weight: 500; /* Medium weight */
-    color: var(--primary-text-light);
-    margin-bottom: 0.25rem;
-    line-height: 1.3;
-    /* For multi-line ellipsis (more complex, often needs JS or specific CSS) */
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Show max 2 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 2.6em; /* Ensure space for 2 lines */
-}
-.video-item .info p { /* Channel/Metadata in Grid */
-    font-size: 0.8rem;
-    color: var(--secondary-text-light);
-    line-height: 1.4;
-}
-
-/* List View Specifics */
-.video-grid.list-view .video-item {
-    display: flex;
-    align-items: flex-start; /* Align items to top for varying text lengths */
-    background-color: transparent; /* No background for list items if page bg is light */
-    box-shadow: none;
-    border-radius: 0;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-light); /* Separator for list items */
-}
-.video-grid.list-view .video-item:last-child {
-    border-bottom: none;
-}
-
-.video-grid.list-view .video-item img.thumbnail {
-    width: 180px; /* Larger thumbnail for list view */
-    min-width: 180px; /* Ensure it doesn't shrink */
-    height: 100px; /* Fixed height */
-    object-fit: cover;
-    margin-right: 1rem;
-    border-radius: 4px; /* Slightly rounded */
-}
-.video-grid.list-view .video-item .info {
-    flex-grow: 1;
-    padding: 0; /* No padding for info div itself, handled by children */
-}
-.video-grid.list-view .video-item .info h3 {
-    font-size: 1.1rem; /* Larger title for list view */
-    min-height: auto; /* Reset min-height for list view */
-}
-.video-grid.list-view .video-item .info p {
-    font-size: 0.85rem;
-}
-
-
-/* Video Player Page */
+/* Video Player Page - STYLES HERE SHOULD AIM TO PRESERVE YOUTUBE LOOK & FEEL */
+/* Global Netflix styles should not break this page's specific YouTube styling */
 #video-player-page {
-    padding: 1rem 0; /* Base padding */
-    background-color: var(--background-light); /* Ensure player page has bg */
+    padding: 1rem 0;
+    background-color: var(--current-background); /* Page BG follows theme */
 }
-#video-player-page .container { /* Allow player page container to be wider */
-    max-width: 1600px; /* Example: For layouts with sidebars eventually */
-}
-/* Layout for video player page - main content and potential sidebar */
-.player-page-layout {
-    display: flex;
-    gap: 1.5rem;
-}
-.player-main-content {
-    flex: 3; /* Takes more space */
-    min-width: 0; /* Prevents flex item from overflowing */
-}
-.player-sidebar-placeholder { /* Placeholder for related videos etc. */
-    flex: 1;
-    min-width: 0;
-    /* background-color: var(--surface-background-light); */ /* Example styling */
-    /* padding: 1rem; */
-    /* border-radius: 8px; */
-}
-@media (max-width: 992px) { /* Stack layout on smaller screens */
-    .player-page-layout {
-        flex-direction: column;
-    }
-    .player-sidebar-placeholder {
-        display: none; /* Hide sidebar on smaller screens for now */
-    }
-}
-
+/* ... existing #video-player-page .container, .player-page-layout etc. are mostly fine ... */
 
 #sticky-player-container {
     position: sticky;
-    top: 60px; /* Adjust based on header height (approx 56-60px) */
+    top: 70px; /* Adjusted for potentially taller Netflix header or more space */
     z-index: 900;
     background-color: #000;
-    margin-bottom: 1rem; /* Space below player */
-    border-radius: 0; /* Player itself is square, container matches */
-    overflow: hidden; /* If player has rounded corners and container is bg */
+    margin-bottom: 1rem;
+    border-radius: 0;
+    overflow: hidden;
 }
-/* Ensure Video.js is responsive within the sticky container */
 #sticky-player-container .video-js {
     width: 100% !important;
-    /* height: auto !important; Let aspect ratio define height */
-    aspect-ratio: 16 / 9; /* Enforce 16:9 aspect ratio */
+    aspect-ratio: 16 / 9;
 }
 
 
-/* VideoJS specific styling - YouTube Accent */
+/* VideoJS specific styling - ENSURE YOUTUBE RED IS USED HERE */
 .video-js .vjs-big-play-button {
     background-color: rgba(0, 0, 0, 0.45);
     border-radius: 50%;
     width: 3em;
     height: 3em;
     line-height: 3em;
-    font-size: 2.5em; /* Adjust size */
+    font-size: 2.5em;
     transition: background-color 0.2s, transform 0.2s;
 }
 .video-js:hover .vjs-big-play-button, .video-js .vjs-big-play-button:focus {
-    background-color: rgba(255, 0, 0, 0.9); /* YouTube red on hover */
+    background-color: rgba(255, 0, 0, 0.9) !important; /* YouTube Red, ensure override */
     transform: scale(1.1);
 }
 .video-js .vjs-control-bar {
-    background-color: rgba(0, 0, 0, 0.3); /* Slightly more transparent */
+    background-color: rgba(0, 0, 0, 0.3);
     transition: opacity 0.3s;
 }
-.video-js.vjs-user-inactive .vjs-control-bar {
-    opacity: 0;
-}
-.video-js.vjs-has-started.vjs-user-active .vjs-control-bar {
-    opacity: 1;
-}
+/* ... other vjs controls ... */
 
 .video-js .vjs-play-progress, .video-js .vjs-volume-level {
-    background: var(--youtube-red) !important; /* Important to override default */
+    background: var(--youtube-player-red) !important; /* Explicitly use YouTube red var */
 }
-.video-js .vjs-slider { /* Slider background */
+.video-js .vjs-slider {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-
+/* Video Info Container - Styles should largely remain YouTube-like */
 #video-info-container {
-    padding-top: 0; /* Removed top padding, handled by player margin */
+    padding-top: 0;
 }
-#video-info-container h2#video-title-player { /* Video Title on Player Page */
-    font-size: 1.4rem; /* Slightly smaller than YT but prominent */
-    font-weight: 600;
-    color: var(--primary-text-light);
+#video-info-container h2#video-title-player {
+    font-size: 1.4rem;
+    font-weight: 600; /* YouTube titles are often bolder */
+    color: var(--current-text-primary); /* Adapts to light/dark via current-var */
     margin-bottom: 0.5rem;
     line-height: 1.3;
 }
-/* Metadata row (creator, stats, buttons) */
 .video-metadata-row {
     display: flex;
-    flex-wrap: wrap; /* Allow wrapping on small screens */
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     padding-bottom: 0.75rem;
     margin-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--current-border); /* Adapts to theme */
 }
-.video-creator-info { /* Placeholder for avatar, name, sub count */
+.video-creator-info {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     font-size: 0.9rem;
-    color: var(--secondary-text-light);
+    color: var(--current-text-secondary); /* Adapts */
 }
 .video-creator-info .avatar-placeholder {
     width: 40px;
     height: 40px;
-    background-color: var(--secondary-text-light);
+    background-color: var(--current-text-secondary); /* Adapts */
     border-radius: 50%;
 }
-.video-actions { /* Container for like, share, subscribe buttons */
+.video-actions {
     display: flex;
     gap: 0.5rem;
 }
-.video-actions button { /* Base style for action buttons */
-    /* Use default button styles */
+.video-actions button {
     font-size: 0.85rem;
     padding: 6px 12px;
+    border-radius: 18px; /* YouTube like buttons are rounded */
+    background-color: var(--current-surface); /* Adapts */
+    color: var(--current-text-primary); /* Adapts */
+    border: 1px solid var(--current-border); /* Adapts */
 }
-#subscribe-btn { /* Specific style for subscribe button */
-    /* Use .accent-button class */
+.video-actions button:hover {
+    background-color: rgba(128, 128, 128, 0.4); /* Adapts */
+}
+
+#subscribe-btn { /* This should be YouTube red */
+    background-color: var(--youtube-player-red) !important; /* Ensure YouTube red */
+    color: #fff !important;
+    border-color: var(--youtube-player-red) !important;
+    font-weight: 500;
+}
+#subscribe-btn:hover {
+    background-color: #cc0000 !important; /* Darker YouTube red */
+    border-color: #cc0000 !important;
 }
 
 
 #video-description-player {
-    background-color: var(--surface-background-light);
+    background-color: var(--current-surface); /* Adapts */
     padding: 12px;
     border-radius: 8px;
     font-size: 0.9rem;
     line-height: 1.6;
-    color: var(--primary-text-light); /* Description text color */
+    color: var(--current-text-primary); /* Adapts */
     margin-bottom: 1rem;
 }
-#video-description-player strong { /* For "Show more/less" if implemented */
+#video-description-player strong {
     cursor: pointer;
-    color: var(--primary-text-light);
+    color: var(--current-text-primary); /* Adapts */
     font-weight: 500;
 }
 
-
+/* Selectors and Episode Navigation - Style to be YouTube like */
 #server-quality-selector, #subtitle-selector, #episode-navigation {
     margin-top: 1rem;
-    margin-bottom: 1.5rem; /* Increased margin */
-    display: flex; /* Align items neatly */
+    margin-bottom: 1.5rem;
+    display: flex;
     align-items: center;
     gap: 0.75rem;
     flex-wrap: wrap;
 }
 #server-quality-selector label, #subtitle-selector label {
     font-size: 0.9rem;
-    color: var(--secondary-text-light);
+    color: var(--current-text-secondary); /* Adapts */
 }
 #server-quality-selector select, #subtitle-selector select {
     padding: 8px 12px;
-    border-radius: 18px; /* Rounded select */
-    border: 1px solid var(--border-light);
-    background-color: var(--surface-background-light);
-    color: var(--primary-text-light);
+    border-radius: 18px; /* Rounded for YT style */
+    border: 1px solid var(--current-border); /* Adapts */
+    background-color: var(--current-surface); /* Adapts */
+    color: var(--current-text-primary); /* Adapts */
     font-size: 0.9rem;
-    min-width: 120px; /* Ensure decent width */
+    min-width: 120px;
 }
 #episode-navigation button {
-    /* Use default button styles */
     font-size: 0.85rem;
+    border-radius: 18px; /* Rounded for YT style */
+    background-color: var(--current-surface); /* Adapts */
+    color: var(--current-text-primary); /* Adapts */
+    border: 1px solid var(--current-border); /* Adapts */
+}
+#episode-navigation button:hover {
+    background-color: rgba(128, 128, 128, 0.4); /* Adapts */
 }
 #episode-navigation #episode-info {
     font-size: 0.9rem;
-    color: var(--secondary-text-light);
+    color: var(--current-text-secondary); /* Adapts */
     padding: 0 0.5rem;
 }
 
-/* Comments Section Placeholder */
+/* Comments Section Placeholder - YouTube style */
 #comments-section h3 {
     font-size: 1.2rem;
     font-weight: 500;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--current-border); /* Adapts */
+    color: var(--current-text-primary); /* Adapts */
 }
 
 
-/* Dark Mode */
-body.dark-mode {
-    background-color: var(--background-dark);
-    color: var(--primary-text-dark);
-}
-body.dark-mode header {
-    background: var(--background-dark); /* Match body background for seamless look */
-    color: var(--primary-text-dark);
-    border-bottom-color: var(--border-dark);
-}
-body.dark-mode header .logo {
-    /* color: var(--youtube-red); Remains same */
-}
-body.dark-mode header .search-bar input[type="text"] {
-    background-color: var(--surface-background-dark); /* Darker input field */
-    color: var(--primary-text-dark);
-    border-color: var(--border-dark);
-}
-body.dark-mode header .search-bar input[type="text"]:focus {
-    border-color: var(--youtube-red);
-    box-shadow: 0 0 0 1px var(--youtube-red);
-}
-body.dark-mode header .search-bar button {
-    background: var(--surface-background-dark);
-    color: var(--primary-text-dark);
-    border-color: var(--border-dark);
-}
-body.dark-mode header .search-bar button:hover {
-     background-color: #3c3c3c;
-     border-color: #555555;
-}
+/* Dark Mode specific overrides are now handled by body.light-mode and default :root being dark */
+/* The body.dark-mode class itself is no longer strictly necessary if dark is the default. */
+/* However, we keep it if we want to explicitly set dark mode via JS or if light was default. */
+/* For this Netflix style, dark IS the default. */
 
-body.dark-mode header .header-actions button {
-    /* Uses base dark mode button styles */
-}
-body.dark-mode header .profile-icon {
-    background: var(--secondary-text-dark);
-    color: var(--background-dark);
-}
+/* Remove explicit dark mode styles that are now covered by current-vars */
+/* e.g. body.dark-mode header { ... } is now just header { background: var(--current-background); ... } */
+/* Most of the previous body.dark-mode section can be removed or refactored. */
 
-body.dark-mode .carousel {
-    background: var(--background-dark); /* Carousel bg matches page bg in dark mode */
-}
-body.dark-mode .carousel-item {
-    background-color: var(--surface-background-dark); /* Carousel items distinct */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25); /* Darker shadow */
-}
-body.dark-mode .carousel-caption h3 {
-    color: var(--primary-text-dark);
-}
-body.dark-mode .carousel-caption p {
-    color: var(--secondary-text-dark);
-}
-
-
-body.dark-mode #category-nav {
-    background: var(--surface-background-dark);
-    color: var(--primary-text-dark);
-    border-bottom-color: var(--border-dark);
-}
-body.dark-mode .dropdown-btn {
-    color: var(--primary-text-dark);
-}
-body.dark-mode .dropdown-btn:hover, body.dark-mode .dropdown.active .dropdown-btn {
-    background-color: rgba(255,255,255,0.08);
-}
-body.dark-mode .dropdown-content {
-    background-color: var(--surface-background-dark); /* Darker dropdown bg */
-    box-shadow: 0px 4px 12px 0px rgba(0,0,0,0.5); /* Stronger shadow for dark mode */
-    border: 1px solid var(--border-dark); /* Subtle border for dropdown */
-}
-body.dark-mode .dropdown-content a {
-    color: var(--primary-text-dark);
-}
-body.dark-mode .dropdown-content a:hover {
-    background-color: rgba(255,255,255,0.08);
-    /* color: var(--youtube-red); Remains same */
-}
-
-body.dark-mode #mobile-bottom-nav {
-    background: var(--surface-background-dark);
-    color: var(--primary-text-dark);
-    border-top-color: var(--border-dark);
-}
-body.dark-mode #mobile-bottom-nav button {
-    color: var(--secondary-text-dark);
-}
-body.dark-mode #mobile-bottom-nav button.active, body.dark-mode #mobile-bottom-nav button:hover {
-    color: var(--youtube-red);
-}
-
-body.dark-mode #mobile-subcategory-drawer {
-    background: var(--surface-background-dark); /* Darker drawer */
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-}
-body.dark-mode #mobile-subcategory-drawer a {
-    color: var(--primary-text-dark);
-    border-bottom-color: var(--border-dark);
-}
-body.dark-mode #mobile-subcategory-drawer a:hover {
-    background-color: rgba(255,255,255,0.08);
-}
-
-
-body.dark-mode .view-controls button {
-    /* Uses base dark mode button styles */
-}
-body.dark-mode .view-controls button.active {
-    background: var(--youtube-red);
-    color: #fff; /* Ensure text is white on red */
-    border-color: var(--youtube-red);
-}
-
-body.dark-mode .video-item {
-    background: var(--surface-background-dark); /* Items distinct from page bg */
-    /* box-shadow: 0 1px 4px rgba(0,0,0,0.2); */
-}
-body.dark-mode .video-item .info h3 {
-    color: var(--primary-text-dark);
-}
-body.dark-mode .video-item .info p {
-    color: var(--secondary-text-dark);
-}
-body.dark-mode .video-grid.list-view .video-item {
-    background-color: transparent;
-    border-bottom-color: var(--border-dark);
-}
-
-
-body.dark-mode #video-player-page {
-    background-color: var(--background-dark);
-}
-body.dark-mode #video-info-container h2#video-title-player {
-    color: var(--primary-text-dark);
-}
-body.dark-mode .video-metadata-row {
-    border-bottom-color: var(--border-dark);
-}
-body.dark-mode .video-creator-info {
-    color: var(--secondary-text-dark);
-}
-body.dark-mode .video-creator-info .avatar-placeholder {
-    background-color: var(--secondary-text-dark);
-}
-/* Dark mode for video action buttons handled by base button dark styles */
-
-body.dark-mode #video-description-player {
-    background-color: var(--surface-background-dark);
-    color: var(--primary-text-dark);
-}
-body.dark-mode #video-description-player strong {
-    color: var(--primary-text-dark);
-}
-
-body.dark-mode #server-quality-selector label,
-body.dark-mode #subtitle-selector label,
-body.dark-mode #episode-navigation #episode-info {
-    color: var(--secondary-text-dark);
-}
-body.dark-mode #server-quality-selector select,
-body.dark-mode #subtitle-selector select {
-    border-color: var(--border-dark);
-    background-color: var(--surface-background-dark); /* Darker selects */
-    color: var(--primary-text-dark);
-}
-/* Dark mode for episode navigation buttons handled by base button dark styles */
-
-body.dark-mode #comments-section h3 {
-    border-bottom-color: var(--border-dark);
-}
-
-
+/* Footer Styling (Netflix often has a more substantial footer) */
 footer {
-    text-align: center;
-    padding: 2rem 0;
+    text-align: center; /* Or left aligned like Netflix */
+    padding: 2rem 4%; /* Align with row content */
     margin-top: 2rem;
-    background: var(--surface-background-light); /* Lighter footer */
-    color: var(--secondary-text-light); /* Softer text */
-    border-top: 1px solid var(--border-light);
+    background: var(--current-surface);
+    color: var(--current-text-secondary);
+    border-top: 1px solid var(--current-border);
 }
-body.dark-mode footer {
-    background: var(--surface-background-dark);
-    color: var(--secondary-text-dark);
-    border-top-color: var(--border-dark);
-}
+/* body.dark-mode footer is covered by current-vars */
 
 
 /* Responsive Adjustments */

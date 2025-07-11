@@ -4,33 +4,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- THEME TOGGLE ---
     const themeToggle = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme');
 
-    if (currentTheme) {
-        document.body.classList.add(currentTheme);
-    } else {
-        // Check system preference if no theme is set
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark-mode');
+    function applyTheme(theme) {
+        if (theme === 'light-mode') {
+            document.body.classList.add('light-mode');
+        } else {
+            document.body.classList.remove('light-mode'); // Dark is default (no class)
+        }
+        localStorage.setItem('theme', theme);
+    }
+
+    function adjustThemeOnLoad() {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+            applyTheme(storedTheme);
+        } else {
+            // If no stored theme, default to dark (which is body without 'light-mode' class)
+            // Optionally, could check system preference for initial light mode if system is light
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                 // applyTheme('light-mode'); // Uncomment to default to light if system is light
+                 applyTheme('dark-mode'); // Forcing dark as default for Netflix style
+            } else {
+                applyTheme('dark-mode'); // Default to dark
+            }
         }
     }
 
     themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        let theme = 'light-mode'; // Default to light
-        if (document.body.classList.contains('dark-mode')) {
-            theme = 'dark-mode';
-        }
-        localStorage.setItem('theme', theme);
+        let newTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+        applyTheme(newTheme);
     });
-     // Listen for changes in system preference
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-        if (!localStorage.getItem('theme')) { // Only apply if user hasn't manually set a theme
+
+    // Listen for changes in system preference (optional: could adapt if user hasn't manually set)
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', event => {
+        const manualTheme = localStorage.getItem('theme');
+        if (!manualTheme) { // Only if user hasn't picked a theme
             if (event.matches) {
-                document.body.classList.add('dark-mode');
+                // applyTheme('light-mode'); // System prefers light
             } else {
-                document.body.classList.remove('dark-mode');
+                // applyTheme('dark-mode');  // System prefers dark
             }
+            // Forcing dark as default for Netflix style, so this listener might be less relevant unless
+            // we want to dynamically switch from default dark to system light if not manually set.
         }
     });
 
@@ -80,11 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIAL LOAD ---
     function init() {
-        populateCarousel(allData.carousel);
+        // populateCarousel(allData.carousel); // Old carousel
+        renderContentRows(); // New Netflix-style rows
         // Initially, display all movies, or a default category
-        populateVideoGrid(getAllItems()); // Display all items initially
-        setupCategoryEventListeners();
+        // populateVideoGrid(getAllItems()); // Grid is less prominent in Netflix, rows are primary
+        // setupCategoryEventListeners(); // Category nav is hidden by default in Netflix style
         setupLazyLoader();
+        adjustThemeOnLoad(); // Adjust theme based on localStorage or system pref
     }
 
     function getAllItems() {
@@ -99,12 +116,14 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    observer.unobserve(img);
+                    if (img.dataset.src) { // Ensure data-src exists
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        observer.unobserve(img);
+                    }
                 }
             });
-        }, { rootMargin: "0px 0px 200px 0px" }); // Load images 200px before they enter viewport
+        }, { rootMargin: "0px 0px 200px 0px" });
     }
 
     function observeLazyImage(imgElement) {
@@ -113,47 +132,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- CAROUSEL ---
-    function populateCarousel(carouselItems) {
-        if (!carouselSection) return;
-        carouselSection.innerHTML = ''; // Clear existing items
-        // Simple carousel for now, can be enhanced with libraries or custom JS
-        const carouselInner = document.createElement('div');
-        carouselInner.className = 'carousel-inner'; // Add a class for styling if needed
+    // --- NETFLIX STYLE ROWS ---
+    const rowsContainer = document.getElementById('carousel-section'); // Re-using existing carousel section as rows container
 
-        carouselItems.forEach(item => {
-            const carouselItem = document.createElement('div');
-            carouselItem.className = 'carousel-item'; // Add a class for styling
-            // Use data-src for lazy loading
-            carouselItem.innerHTML = `
-                <img data-src="${item.thumbnail}" alt="${item.title}" class="lazy" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="> <!-- Tiny transparent gif -->
-                <div class="carousel-caption">
-                    <h3>${item.title}</h3>
-                    <p>${item.description.substring(0,100)}...</p>
-                    <button class="play-carousel-btn" data-id="${item.id}" data-type="${item.type || getItemType(item.id)}">Play</button>
-                </div>
-            `;
-            carouselInner.appendChild(carouselItem);
-            const img = carouselItem.querySelector('img.lazy');
-            if (img) observeLazyImage(img);
-        });
-        carouselSection.appendChild(carouselInner);
+    function renderContentRows() {
+        if (!rowsContainer) return;
+        rowsContainer.innerHTML = ''; // Clear previous content
 
-        document.querySelectorAll('.play-carousel-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const itemId = e.target.dataset.id;
-                const itemType = e.target.dataset.type;
-                const item = findItemByIdAndType(itemId, itemType);
-                if (item) {
-                    openVideoPlayer(item);
-                }
-            });
+        // Define categories for rows
+        // This could be more dynamic, e.g. from a config or by genres in data
+        const rowCategories = [
+            { title: "Featured", items: allData.carousel.slice(0, 5) }, // Use carousel data for a "Featured" row
+            { title: "Movies", items: allData.movies },
+            { title: "TV Series", items: allData.tvseries },
+            { title: "Live TV", items: allData.livetv }
+            // Add more rows by genre if data structure supports easy filtering
+            // e.g., { title: "Action Movies", items: allData.movies.filter(m => m.categories.includes('action')) }
+        ];
+
+        rowCategories.forEach(category => {
+            if (category.items && category.items.length > 0) {
+                const rowWrapper = document.createElement('div');
+                rowWrapper.className = 'carousel-inner'; // This class now represents a single row container
+
+                const rowTitle = document.createElement('h2');
+                rowTitle.className = 'row-title';
+                rowTitle.textContent = category.title;
+                rowWrapper.appendChild(rowTitle);
+
+                const itemsContainer = document.createElement('div');
+                itemsContainer.className = 'row-items';
+
+                category.items.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'carousel-item'; // This class styles individual cards
+
+                    // Determine item type if not explicitly defined (e.g. for items from movies/tvseries arrays)
+                    const itemType = item.type || getItemType(item.id);
+
+                    itemElement.innerHTML = `
+                        <img data-src="${item.thumbnail}" alt="${item.title}" class="thumbnail lazy" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                        <div class="carousel-caption">
+                            <h3>${item.title}</h3>
+                            ${item.genre ? `<p>${item.genre}</p>` : ''}
+                            <button class="play-carousel-btn" data-id="${item.id}" data-type="${itemType}">&#9658; Play</button>
+                        </div>
+                    `;
+                    // Add click listener to the whole item for navigation
+                    itemElement.addEventListener('click', (e) => {
+                        // Prevent click on button inside caption from triggering this
+                        if (e.target.classList.contains('play-carousel-btn')) return;
+
+                        const foundItem = findItemByIdAndType(item.id, itemType);
+                        if (foundItem) openVideoPlayer(foundItem);
+                    });
+
+                    // Specific listener for play button inside caption
+                    const playButton = itemElement.querySelector('.play-carousel-btn');
+                    if (playButton) {
+                        playButton.addEventListener('click', (e) => {
+                            e.stopPropagation(); // Prevent event bubbling to itemElement listener
+                            const itemId = e.target.dataset.id;
+                            const type = e.target.dataset.type;
+                            const foundItem = findItemByIdAndType(itemId, type);
+                            if (foundItem) openVideoPlayer(foundItem);
+                        });
+                    }
+
+                    itemsContainer.appendChild(itemElement);
+                    const img = itemElement.querySelector('img.lazy');
+                    if (img) observeLazyImage(img);
+                });
+                rowWrapper.appendChild(itemsContainer);
+                rowsContainer.appendChild(rowWrapper);
+            }
         });
     }
 
-    // --- VIDEO GRID ---
+
+    // --- VIDEO GRID (May be used for search results or specific category pages later) ---
     function populateVideoGrid(items) {
-        if (!videoGrid) return;
+        if (!videoGrid) {
+            // console.warn("videoGrid element not found, cannot populate grid.");
+            return;
+        }
         videoGrid.innerHTML = ''; // Clear existing items
         if (items.length === 0) {
             videoGrid.innerHTML = '<p>No items found for this category.</p>';
@@ -587,6 +649,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
+    // --- HEADER SCROLL EFFECT ---
+    const header = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) { // Add 'scrolled' class after 50px of scroll
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
 
     // --- START THE APP ---
     init();
