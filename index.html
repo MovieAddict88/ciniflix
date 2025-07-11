@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub - Professional Streaming Platform</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#3B82F6',secondary:'#1E40AF'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        .carousel-container { scroll-behavior: smooth; }
+        .grid-item { transition: transform 0.2s ease-in-out; }
+        .grid-item:hover { transform: scale(1.05); }
+        .video-js { width: 100%; height: auto; }
+        .category-slide { transform: translateY(100%); transition: transform 0.3s ease-in-out; }
+        .category-slide.active { transform: translateY(0); }
+        .search-results { max-height: 300px; overflow-y: auto; }
+        @media (max-width: 768px) {
+            .mobile-nav { bottom: 0; }
+            .content-main { padding-bottom: 80px; }
+        }
+        .dark { background-color: #1a1a1a; color: #ffffff; }
+        .dark .bg-white { background-color: #2a2a2a; }
+        .dark .text-gray-900 { color: #ffffff; }
+        .dark .text-gray-600 { color: #a0a0a0; }
+        .dark .border-gray-200 { border-color: #404040; }
+    </style>
+</head>
+<body class="bg-gray-50 transition-colors duration-300">
+    <header class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-md z-50 px-4 py-3">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-2xl font-['Pacifico'] text-primary">StreamHub</h1>
+            </div>
+            
+            <div class="flex-1 max-w-2xl mx-4 relative">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search movies, TV shows, live channels..." 
+                           class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center">
+                        <i class="ri-search-line text-gray-400"></i>
+                    </div>
+                </div>
+                <div id="searchResults" class="absolute top-full left-0 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg mt-1 hidden search-results shadow-lg"></div>
+            </div>
+            
+            <button id="themeToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-sun-line dark:hidden"></i>
+                    <i class="ri-moon-line hidden dark:block"></i>
+                </div>
+            </button>
+        </div>
+    </header>
+    <main class="pt-20 content-main">
+        <section class="mb-8">
+            <div class="relative overflow-hidden">
+                <div id="carousel" class="flex transition-transform duration-500 carousel-container">
+                </div>
+                <button id="prevBtn" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 cursor-pointer">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-arrow-left-line"></i>
+                    </div>
+                </button>
+                <button id="nextBtn" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 cursor-pointer">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-arrow-right-line"></i>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <div class="hidden md:block mb-6">
+            <nav class="max-w-7xl mx-auto px-4">
+                <div class="flex space-x-8">
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 py-2 text-gray-700 dark:text-gray-300 hover:text-primary cursor-pointer">
+                            <span>Movies</span>
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </div>
+                        </button>
+                        <div class="absolute top-full left-0 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">All Movies</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Action</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Comedy</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Drama</a>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 py-2 text-gray-700 dark:text-gray-300 hover:text-primary cursor-pointer">
+                            <span>Live TV</span>
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </div>
+                        </button>
+                        <div class="absolute top-full left-0 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">All Channels</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">News</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Sports</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Entertainment</a>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 py-2 text-gray-700 dark:text-gray-300 hover:text-primary cursor-pointer">
+                            <span>TV Series</span>
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </div>
+                        </button>
+                        <div class="absolute top-full left-0 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">All Series</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Trending</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Popular</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">New Releases</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Featured Content</h2>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">View:</span>
+                    <button id="gridToggle" class="flex items-center space-x-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="w-4 h-4 flex items-center justify-center">
+                            <i class="ri-grid-line"></i>
+                        </div>
+                        <span class="text-sm">Grid</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="contentGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            </div>
+        </div>
+    </main>
+
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mobile-nav">
+        <div class="grid grid-cols-3 h-16">
+            <button class="nav-item flex flex-col items-center justify-center space-y-1 cursor-pointer" data-category="movies">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-movie-line"></i>
+                </div>
+                <span class="text-xs">Movies</span>
+            </button>
+            <button class="nav-item flex flex-col items-center justify-center space-y-1 cursor-pointer" data-category="livetv">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-live-line"></i>
+                </div>
+                <span class="text-xs">Live TV</span>
+            </button>
+            <button class="nav-item flex flex-col items-center justify-center space-y-1 cursor-pointer" data-category="series">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-tv-line"></i>
+                </div>
+                <span class="text-xs">TV Series</span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="categorySlide" class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 category-slide z-40">
+        <div class="p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="slideTitle" class="text-lg font-semibold text-gray-900 dark:text-white">Categories</h3>
+                <button id="closeSlide" class="p-2 cursor-pointer">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line"></i>
+                    </div>
+                </button>
+            </div>
+            <div id="slideContent" class="space-y-2">
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden">
+        <div class="h-full flex flex-col">
+            <div class="flex justify-between items-center p-4 bg-black">
+                <h3 id="videoTitle" class="text-white text-lg font-semibold">Video Player</h3>
+                <button id="closeVideo" class="text-white p-2 cursor-pointer">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="flex-1 flex flex-col lg:flex-row">
+                <div class="lg:w-2/3">
+                    <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
+                        <p class="vjs-no-js">
+                            To view this video please enable JavaScript, and consider upgrading to a web browser that
+                            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>.
+                        </p>
+                    </video>
+                </div>
+                <div class="lg:w-1/3 bg-gray-900 p-4 overflow-y-auto">
+                    <div class="mb-4">
+                        <label class="block text-white text-sm mb-2">Quality:</label>
+                        <select id="qualitySelect" class="w-full p-2 bg-gray-800 text-white rounded">
+                            <option value="4k">4K Ultra HD</option>
+                            <option value="1080p">1080p Full HD</option>
+                            <option value="720p">720p HD</option>
+                            <option value="480p">480p</option>
+                            <option value="360p">360p</option>
+                            <option value="240p">240p</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white text-sm mb-2">Subtitles:</label>
+                        <select id="subtitleSelect" class="w-full p-2 bg-gray-800 text-white rounded">
+                            <option value="off">Off</option>
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                        </select>
+                    </div>
+                    <div id="episodeList" class="space-y-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="data-handler">
+        const streamingData = {
+            carousel: [
+                {
+                    id: 1,
+                    title: "The Dark Knight",
+                    description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests.",
+                    image: "https://readdy.ai/api/search-image?query=The%20Dark%20Knight%20movie%20poster%20Batman%20Joker%20cinematic%20dark%20atmosphere&width=1920&height=800&seq=carousel1&orientation=landscape",
+                    rating: "9.0",
+                    duration: "152 min",
+                    year: "2008",
+                    type: "movie",
+                    servers: [
+                        { quality: "4k", url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" },
+                        { quality: "1080p", url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Breaking Bad",
+                    description: "A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine.",
+                    image: "https://readdy.ai/api/search-image?query=Breaking%20Bad%20TV%20series%20poster%20Walter%20White%20Jesse%20Pinkman%20desert%20laboratory&width=1920&height=800&seq=carousel2&orientation=landscape",
+                    rating: "9.5",
+                    duration: "47 min/ep",
+                    year: "2008-2013",
+                    type: "series",
+                    seasons: 5,
+                    episodes: 62
+                },
+                {
+                    id: 3,
+                    title: "CNN Live",
+                    description: "Breaking news, latest updates and in-depth coverage of current events from around the world.",
+                    image: "https://readdy.ai/api/search-image?query=CNN%20news%20studio%20live%20broadcast%20television%20newsroom%20professional&width=1920&height=800&seq=carousel3&orientation=landscape",
+                    rating: "Live",
+                    duration: "24/7",
+                    year: "2024",
+                    type: "live",
+                    servers: [
+                        { quality: "1080p", url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" }
+                    ]
+                }
+            ],
+            content: [
+                {
+                    id: 4,
+                    title: "Inception",
+                    image: "https://readdy.ai/api/search-image?query=Inception%20movie%20poster%20Leonardo%20DiCaprio%20dream%20layers%20surreal%20architecture&width=400&height=600&seq=content1&orientation=portrait",
+                    rating: "8.8",
+                    year: "2010",
+                    type: "movie"
+                },
+                {
+                    id: 5,
+                    title: "Stranger Things",
+                    image: "https://readdy.ai/api/search-image?query=Stranger%20Things%20Netflix%20series%20poster%20kids%20supernatural%2080s%20retro&width=400&height=600&seq=content2&orientation=portrait",
+                    rating: "8.7",
+                    year: "2016",
+                    type: "series"
+                },
+                {
+                    id: 6,
+                    title: "The Avengers",
+                    image: "https://readdy.ai/api/search-image?query=The%20Avengers%20movie%20poster%20Marvel%20superheroes%20Iron%20Man%20Captain%20America%20Thor&width=400&height=600&seq=content3&orientation=portrait",
+                    rating: "8.0",
+                    year: "2012",
+                    type: "movie"
+                },
+                {
+                    id: 7,
+                    title: "Game of Thrones",
+                    image: "https://readdy.ai/api/search-image?query=Game%20of%20Thrones%20HBO%20series%20poster%20Iron%20Throne%20medieval%20fantasy%20dragons&width=400&height=600&seq=content4&orientation=portrait",
+                    rating: "9.3",
+                    year: "2011",
+                    type: "series"
+                },
+                {
+                    id: 8,
+                    title: "Interstellar",
+                    image: "https://readdy.ai/api/search-image?query=Interstellar%20movie%20poster%20space%20exploration%20Matthew%20McConaughey%20cosmic%20wormhole&width=400&height=600&seq=content5&orientation=portrait",
+                    rating: "8.6",
+                    year: "2014",
+                    type: "movie"
+                },
+                {
+                    id: 9,
+                    title: "The Mandalorian",
+                    image: "https://readdy.ai/api/search-image?query=The%20Mandalorian%20Disney%20Plus%20series%20poster%20Star%20Wars%20Baby%20Yoda%20bounty%20hunter&width=400&height=600&seq=content6&orientation=portrait",
+                    rating: "8.8",
+                    year: "2019",
+                    type: "series"
+                },
+                {
+                    id: 10,
+                    title: "BBC World News",
+                    image: "https://readdy.ai/api/search-image?query=BBC%20World%20News%20live%20television%20broadcast%20studio%20professional%20news%20anchor&width=400&height=600&seq=content7&orientation=portrait",
+                    rating: "Live",
+                    year: "2024",
+                    type: "live"
+                },
+                {
+                    id: 11,
+                    title: "The Matrix",
+                    image: "https://readdy.ai/api/search-image?query=The%20Matrix%20movie%20poster%20Keanu%20Reeves%20Neo%20digital%20rain%20cyberpunk&width=400&height=600&seq=content8&orientation=portrait",
+                    rating: "8.7",
+                    year: "1999",
+                    type: "movie"
+                }
+            ]
+        };
+    </script>
+
+    <script id="theme-handler">
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
+            
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                html.classList.toggle('dark');
+                const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
+                localStorage.setItem('theme', currentTheme);
+            });
+        });
+    </script>
+
+    <script id="carousel-handler">
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.getElementById('carousel');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentSlide = 0;
+            
+            function renderCarousel() {
+                carousel.innerHTML = streamingData.carousel.map(item => `
+                    <div class="min-w-full relative">
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-64 md:h-96 object-cover object-top">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end">
+                            <div class="p-6 md:p-8 text-white max-w-2xl">
+                                <h3 class="text-2xl md:text-4xl font-bold mb-2">${item.title}</h3>
+                                <p class="text-sm md:text-base mb-4 opacity-90">${item.description}</p>
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-500 text-black px-2 py-1 rounded text-sm font-bold">${item.rating}</span>
+                                    <span class="text-sm">${item.duration}</span>
+                                    <span class="text-sm">${item.year}</span>
+                                </div>
+                                <button class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-button flex items-center space-x-2 cursor-pointer" onclick="openVideo(${item.id})">
+                                    <div class="w-5 h-5 flex items-center justify-center">
+                                        <i class="ri-play-fill"></i>
+                                    </div>
+                                    <span>Play Now</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            function updateCarousel() {
+                carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+            
+            prevBtn.addEventListener('click', function() {
+                currentSlide = currentSlide > 0 ? currentSlide - 1 : streamingData.carousel.length - 1;
+                updateCarousel();
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                currentSlide = currentSlide < streamingData.carousel.length - 1 ? currentSlide + 1 : 0;
+                updateCarousel();
+            });
+            
+            renderCarousel();
+            
+            setInterval(function() {
+                currentSlide = currentSlide < streamingData.carousel.length - 1 ? currentSlide + 1 : 0;
+                updateCarousel();
+            }, 5000);
+        });
+    </script>
+
+    <script id="content-grid-handler">
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentGrid = document.getElementById('contentGrid');
+            const gridToggle = document.getElementById('gridToggle');
+            let isGridView = true;
+            
+            function renderContent() {
+                if (isGridView) {
+                    contentGrid.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4';
+                    contentGrid.innerHTML = streamingData.content.map(item => `
+                        <div class="grid-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openVideo(${item.id})">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-48 md:h-64 object-cover object-top">
+                            <div class="p-3">
+                                <h3 class="font-semibold text-sm md:text-base text-gray-900 dark:text-white mb-1 truncate">${item.title}</h3>
+                                <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                                    <span>${item.year}</span>
+                                    <span class="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold">${item.rating}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    contentGrid.className = 'space-y-4';
+                    contentGrid.innerHTML = streamingData.content.map(item => `
+                        <div class="grid-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex cursor-pointer" onclick="openVideo(${item.id})">
+                            <img src="${item.image}" alt="${item.title}" class="w-24 h-32 object-cover object-top">
+                            <div class="p-4 flex-1">
+                                <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-2">${item.title}</h3>
+                                <div class="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                                    <span>${item.year}</span>
+                                    <span class="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold">${item.rating}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+            
+            gridToggle.addEventListener('click', function() {
+                isGridView = !isGridView;
+                const icon = gridToggle.querySelector('i');
+                const text = gridToggle.querySelector('span');
+                
+                if (isGridView) {
+                    icon.className = 'ri-grid-line';
+                    text.textContent = 'Grid';
+                } else {
+                    icon.className = 'ri-list-check';
+                    text.textContent = 'List';
+                }
+                
+                renderContent();
+            });
+            
+            renderContent();
+        });
+    </script>
+    <script id="mobile-navigation-handler">
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const categorySlide = document.getElementById('categorySlide');
+            const slideTitle = document.getElementById('slideTitle');
+            const slideContent = document.getElementById('slideContent');
+            const closeSlide = document.getElementById('closeSlide');
+            
+            const categories = {
+                movies: {
+                    title: 'Movies',
+                    items: ['All Movies', 'Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Romance']
+                },
+                livetv: {
+                    title: 'Live TV',
+                    items: ['All Channels', 'News', 'Sports', 'Entertainment', 'Documentary', 'Kids']
+                },
+                series: {
+                    title: 'TV Series',
+                    items: ['All Series', 'Trending', 'Popular', 'New Releases', 'Comedy Series', 'Drama Series']
+                }
+            };
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    const categoryData = categories[category];
+                    
+                    slideTitle.textContent = categoryData.title;
+                    slideContent.innerHTML = categoryData.items.map(item => `
+                        <a href="#" class="block py-3 text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 cursor-pointer">${item}</a>
+                    `).join('');
+                    
+                    categorySlide.classList.add('active');
+                });
+            });
+            
+            closeSlide.addEventListener('click', function() {
+                categorySlide.classList.remove('active');
+            });
+        });
+    </script>
+
+    <script id="search-handler">
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length > 0) {
+                    const results = streamingData.content.filter(item => 
+                        item.title.toLowerCase().includes(query)
+                    );
+                    
+                    if (results.length > 0) {
+                        searchResults.innerHTML = results.map(item => `
+                            <div class="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" onclick="openVideo(${item.id})">
+                                <img src="${item.image}" alt="${item.title}" class="w-12 h-16 object-cover object-top rounded mr-3">
+                                <div>
+                                    <h4 class="font-medium text-gray-900 dark:text-white">${item.title}</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">${item.year} • ${item.rating}</p>
+                                </div>
+                            </div>
+                        `).join('');
+                        searchResults.classList.remove('hidden');
+                    } else {
+                        searchResults.innerHTML = '<div class="p-3 text-gray-600 dark:text-gray-400">No results found</div>';
+                        searchResults.classList.remove('hidden');
+                    }
+                } else {
+                    searchResults.classList.add('hidden');
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+    <script id="video-player-handler">
+        let player;
+        
+        function openVideo(id) {
+            const videoModal = document.getElementById('videoModal');
+            const videoTitle = document.getElementById('videoTitle');
+            const qualitySelect = document.getElementById('qualitySelect');
+            const subtitleSelect = document.getElementById('subtitleSelect');
+            const episodeList = document.getElementById('episodeList');
+            
+            const item = streamingData.carousel.find(item => item.id === id) || 
+                        streamingData.content.find(item => item.id === id);
+            
+            if (item) {
+                videoTitle.textContent = item.title;
+                videoModal.classList.remove('hidden');
+                
+                if (player) {
+                    player.dispose();
+                }
+                
+                player = videojs('videoPlayer', {
+                    controls: true,
+                    responsive: true,
+                    fluid: true,
+                    playbackRates: [0.5, 1, 1.25, 1.5, 2],
+                    plugins: {}
+                });
+                
+                player.src({
+                    src: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+                    type: 'video/mp4'
+                });
+                
+                if (item.type === 'series' && item.episodes) {
+                    episodeList.innerHTML = Array.from({length: Math.min(item.episodes, 10)}, (_, i) => `
+                        <div class="bg-gray-800 p-3 rounded cursor-pointer hover:bg-gray-700">
+                            <h4 class="text-white font-medium">Episode ${i + 1}</h4>
+                            <p class="text-gray-400 text-sm">Season 1, Episode ${i + 1}</p>
+                        </div>
+                    `).join('');
+                }
+                
+                qualitySelect.addEventListener('change', function() {
+                    console.log('Quality changed to:', this.value);
+                });
+                
+                subtitleSelect.addEventListener('change', function() {
+                    console.log('Subtitle changed to:', this.value);
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeVideo = document.getElementById('closeVideo');
+            const videoModal = document.getElementById('videoModal');
+            
+            closeVideo.addEventListener('click', function() {
+                videoModal.classList.add('hidden');
+                if (player) {
+                    player.dispose();
+                    player = null;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
