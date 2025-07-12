@@ -57,10 +57,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ActivityNotificationDetail extends AppCompatActivity {
+public class ActivityVideoDetail extends AppCompatActivity {
 
     private Call<CallbackVideoDetail> callbackCall = null;
     private LinearLayout lytMainContent;
+    private Video video;
     TextView txtTitle, txtCategory, txtDuration, txtTotalViews, txtDateTime;
     LinearLayout lytView, lytDate;
     ImageView videoThumbnail;
@@ -72,7 +73,6 @@ public class ActivityNotificationDetail extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     SharedPref sharedPref;
     ImageButton btnFavorite, btnShare;
-    private String videoId;
     AdsPref adsPref;
     AdsManager adsManager;
     Tools tools;
@@ -84,6 +84,8 @@ public class ActivityNotificationDetail extends AppCompatActivity {
         Tools.getTheme(this);
         setContentView(R.layout.activity_video_detail);
 
+        video = (Video) getIntent().getSerializableExtra(Constant.EXTRA_OBJC);
+
         Tools.setNavigation(this);
 
         tools = new Tools(this);
@@ -92,7 +94,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
 
         adsManager = new AdsManager(this);
         adsManager.loadBannerAd(adsPref.getIsBannerPostDetails());
-
+        adsManager.loadInterstitialAd(adsPref.getIsInterstitialPostDetails(), 1);
         LinearLayout nativeAdView = findViewById(R.id.native_ad_view);
         Tools.setNativeAdStyle(this, nativeAdView, Constant.NATIVE_AD_STYLE_POST_DETAILS);
         adsManager.loadNativeAd(adsPref.getIsNativeAdPostDetails(), Constant.NATIVE_AD_STYLE_POST_DETAILS);
@@ -123,9 +125,6 @@ public class ActivityNotificationDetail extends AppCompatActivity {
         btnShare = findViewById(R.id.btn_share);
 
         lytSuggested = findViewById(R.id.lyt_suggested);
-
-        Intent intent = getIntent();
-        videoId = intent.getStringExtra("id");
 
         if (AppConfig.ALLOW_APP_ACCESSED_USING_VPN) {
             requestAction();
@@ -167,7 +166,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
     }
 
     private void requestPostData() {
-        this.callbackCall = RestAdapter.createAPI(sharedPref.getBaseUrl()).getVideoDetail(videoId);
+        this.callbackCall = RestAdapter.createAPI(sharedPref.getBaseUrl()).getVideoDetail(video.vid);
         this.callbackCall.enqueue(new Callback<CallbackVideoDetail>() {
             public void onResponse(@NonNull Call<CallbackVideoDetail> call, @NonNull Response<CallbackVideoDetail> response) {
                 CallbackVideoDetail responseHome = response.body();
@@ -191,7 +190,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
     private void onFailRequest() {
         swipeProgress(false);
         lytMainContent.setVisibility(View.GONE);
-        if (Tools.isConnect(ActivityNotificationDetail.this)) {
+        if (Tools.isConnect(ActivityVideoDetail.this)) {
             showFailedView(true, getString(R.string.failed_text));
         } else {
             showFailedView(true, getString(R.string.failed_text));
@@ -220,17 +219,14 @@ public class ActivityNotificationDetail extends AppCompatActivity {
         lytMainContent.setVisibility(View.GONE);
     }
 
-    private void displayAllData(CallbackVideoDetail resp) {
-        displayData(resp.post);
-        displaySuggested(resp.suggested);
+    private void displayAllData(CallbackVideoDetail responseHome) {
+        displayData(responseHome.post);
+        displaySuggested(responseHome.suggested);
     }
 
-    public void displayData(final Video video) {
-
-        adsManager.loadInterstitialAd(adsPref.getIsInterstitialPostDetails(), 1);
+    public void displayData(Video video) {
 
         txtTitle.setText(video.video_title);
-        txtCategory.setText(video.category_name);
         txtDuration.setText(video.video_duration);
 
         if (AppConfig.ENABLE_VIEW_COUNT) {
@@ -240,7 +236,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
         }
 
         if (AppConfig.ENABLE_DATE_DISPLAY && AppConfig.DISPLAY_DATE_AS_TIME_AGO) {
-            txtDateTime.setText(Tools.getFormatedDateSimple(video.date_time));
+            txtDateTime.setText(Tools.getTimeAgo(video.date_time));
         } else if (AppConfig.ENABLE_DATE_DISPLAY && !AppConfig.DISPLAY_DATE_AS_TIME_AGO) {
             txtDateTime.setText(Tools.getFormatedDateSimple(video.date_time));
         } else {
@@ -269,7 +265,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
                     .into(videoThumbnail);
         }
 
-        videoThumbnail.setOnClickListener(view -> {
+        videoThumbnail.setOnClickListener(view ->  {
             onVideoClick(video);
             showInterstitialAd();
         });
@@ -278,7 +274,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
 
         btnShare.setOnClickListener(view -> Tools.shareContent(this, video.video_title, getResources().getString(R.string.share_text)));
 
-        addToFavorite(video);
+        addToFavorite();
 
         new Handler().postDelayed(() -> lytSuggested.setVisibility(View.VISIBLE), 1000);
 
@@ -294,7 +290,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
     }
 
     private void onVideoClick(Video video) {
-        if (Tools.isNetworkAvailable(ActivityNotificationDetail.this)) {
+        if (Tools.isNetworkAvailable(ActivityVideoDetail.this)) {
             if (video.video_type != null && video.video_type.equals("youtube")) {
                 Intent intent = new Intent(getApplicationContext(), ActivityYoutubePlayer.class);
                 intent.putExtra(Constant.KEY_VIDEO_ID, video.video_id);
@@ -315,21 +311,20 @@ public class ActivityNotificationDetail extends AppCompatActivity {
     }
 
     private void displaySuggested(List<Video> videos) {
-
         RecyclerView recyclerView = findViewById(R.id.recycler_view_suggested);
-        recyclerView.setLayoutManager(new LinearLayoutManager(ActivityNotificationDetail.this));
-        AdapterSuggested adapterSuggested = new AdapterSuggested(ActivityNotificationDetail.this, recyclerView, videos);
+        recyclerView.setLayoutManager(new LinearLayoutManager(ActivityVideoDetail.this));
+        AdapterSuggested adapterSuggested = new AdapterSuggested(ActivityVideoDetail.this, recyclerView, videos);
         recyclerView.setAdapter(adapterSuggested);
         recyclerView.setNestedScrollingEnabled(false);
 
         adapterSuggested.setOnItemClickListener((view, obj, position) -> {
-            Intent intent = new Intent(getApplicationContext(), ActivityNotificationDetail.class);
-            intent.putExtra("id", obj.vid);
+            Intent intent = new Intent(getApplicationContext(), ActivityVideoDetail.class);
+            intent.putExtra(Constant.EXTRA_OBJC, obj);
             startActivity(intent);
             adsManager.destroyBannerAd();
         });
 
-        adapterSuggested.setOnItemOverflowClickListener((view, obj, position) -> tools.showBottomSheetDialog(ActivityNotificationDetail.this, parentView, obj));
+        adapterSuggested.setOnItemOverflowClickListener((view, obj, position) -> tools.showBottomSheetDialog(ActivityVideoDetail.this, parentView, obj));
 
         TextView txtSuggested = findViewById(R.id.txt_suggested);
         if (videos.size() > 0) {
@@ -357,6 +352,8 @@ public class ActivityNotificationDetail extends AppCompatActivity {
             getSupportActionBar().setTitle("");
         }
 
+        txtCategory.setText(video.category_name);
+
     }
 
     @Override
@@ -365,39 +362,39 @@ public class ActivityNotificationDetail extends AppCompatActivity {
         return true;
     }
 
-    public void addToFavorite(Video post) {
+    public void addToFavorite() {
 
-        List<Video> data = dbFavorite.getFavRow(videoId);
+        List<Video> data = dbFavorite.getFavRow(video.vid);
         if (data.size() == 0) {
             btnFavorite.setImageResource(R.drawable.ic_fav_outline);
         } else {
-            if (data.get(0).getVid().equals(videoId)) {
+            if (data.get(0).getVid().equals(video.vid)) {
                 btnFavorite.setImageResource(R.drawable.ic_fav);
             }
         }
 
         btnFavorite.setOnClickListener(view -> {
-            List<Video> data1 = dbFavorite.getFavRow(videoId);
+            List<Video> data1 = dbFavorite.getFavRow(video.vid);
             if (data1.size() == 0) {
                 dbFavorite.addToFavorite(new Video(
-                        post.category_name,
-                        post.vid,
-                        post.video_title,
-                        post.video_url,
-                        post.video_id,
-                        post.video_thumbnail,
-                        post.video_duration,
-                        post.video_description,
-                        post.video_type,
-                        post.total_views,
-                        post.date_time
+                        video.category_name,
+                        video.vid,
+                        video.video_title,
+                        video.video_url,
+                        video.video_id,
+                        video.video_thumbnail,
+                        video.video_duration,
+                        video.video_description,
+                        video.video_type,
+                        video.total_views,
+                        video.date_time
                 ));
                 Snackbar.make(parentView, R.string.msg_favorite_added, Snackbar.LENGTH_SHORT).show();
                 btnFavorite.setImageResource(R.drawable.ic_fav);
 
             } else {
-                if (data1.get(0).getVid().equals(videoId)) {
-                    dbFavorite.RemoveFav(new Video(videoId));
+                if (data1.get(0).getVid().equals(video.vid)) {
+                    dbFavorite.RemoveFav(new Video(video.vid));
                     Snackbar.make(parentView, R.string.msg_favorite_removed, Snackbar.LENGTH_SHORT).show();
                     btnFavorite.setImageResource(R.drawable.ic_fav_outline);
                 }
@@ -421,7 +418,7 @@ public class ActivityNotificationDetail extends AppCompatActivity {
 
     @SuppressWarnings("deprecation")
     private void loadViewed() {
-        new MyTask().execute(sharedPref.getBaseUrl() + "/api/get_total_views/?id=" + videoId);
+        new MyTask().execute(sharedPref.getBaseUrl() + "/api/get_total_views/?id=" + video.vid);
     }
 
     @SuppressWarnings("deprecation")
